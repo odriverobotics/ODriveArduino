@@ -1,6 +1,6 @@
 // Author: ODrive Robotics Inc.
 // License: MIT
-// Documentation: https://docs.odriverobotics.com/v/latest/arduino-guide.html
+// Documentation: https://docs.odriverobotics.com/v/latest/guides/arduino-guide.html
 
 #include "Arduino.h"
 #include "ODriveArduino.h"
