@@ -1,0 +1,9 @@
+compile:
+  # Example is written for Arduino Uno.
+  # Most other boards either don't define `Serial` or don't support SoftwareSerial.h
+  platforms:
+    - uno
+    # - due # not supported
+    # - zero # not supported
+    - leonardo
+    - mega2560
