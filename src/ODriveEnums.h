@@ -159,6 +159,7 @@ enum ODriveSpiEncoderMode {
     SPI_ENCODER_MODE_AEAT                    = 4,
     SPI_ENCODER_MODE_MA732                   = 5,
     SPI_ENCODER_MODE_TLE                     = 6,
+    SPI_ENCODER_MODE_BISSC                   = 7,
 };
 
 // ODrive.Controller.InputMode
