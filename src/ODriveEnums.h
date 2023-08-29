@@ -143,9 +143,9 @@ enum ODriveEncoderId {
     ENCODER_ID_SPI_ENCODER2                  = 7,
     ENCODER_ID_HALL_ENCODER0                 = 8,
     ENCODER_ID_HALL_ENCODER1                 = 9,
-    ENCODER_ID_AMT21_ENCODER0                = 10,
-    ENCODER_ID_AMT21_ENCODER1                = 11,
-    ENCODER_ID_AMT21_ENCODER2                = 12,
+    ENCODER_ID_RS485_ENCODER0                = 10,
+    ENCODER_ID_RS485_ENCODER1                = 11,
+    ENCODER_ID_RS485_ENCODER2                = 12,
     ENCODER_ID_ONBOARD_ENCODER0              = 13,
     ENCODER_ID_ONBOARD_ENCODER1              = 14,
 };
@@ -160,6 +160,15 @@ enum ODriveSpiEncoderMode {
     SPI_ENCODER_MODE_MA732                   = 5,
     SPI_ENCODER_MODE_TLE                     = 6,
     SPI_ENCODER_MODE_BISSC                   = 7,
+};
+
+// ODrive.Rs485EncoderMode
+enum ODriveRs485EncoderMode {
+    RS485_ENCODER_MODE_DISABLED              = 0,
+    RS485_ENCODER_MODE_AMT21_POLLING         = 1,
+    RS485_ENCODER_MODE_AMT21_EVENT_DRIVEN    = 2,
+    RS485_ENCODER_MODE_MBS                   = 3,
+    RS485_ENCODER_MODE_ODRIVE_OA1            = 4,
 };
 
 // ODrive.Controller.InputMode
