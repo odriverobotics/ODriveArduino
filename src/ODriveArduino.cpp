@@ -81,7 +81,7 @@ void ODriveArduino::setState(ODriveAxisState requested_state) {
 }
 
 ODriveAxisState ODriveArduino::getState() {
-    return getParameterAsInt("axis0.current_state");
+    return (ODriveAxisState)getParameterAsInt("axis0.current_state");
 }
 
 String ODriveArduino::readLine(unsigned long timeout_ms) {
