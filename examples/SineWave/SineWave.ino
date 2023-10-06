@@ -2,16 +2,47 @@
 #include <ODriveArduino.h>
 #include <SoftwareSerial.h>
 
-SoftwareSerial odrive_serial(8, 9); // RX (ODrive TX), TX (ODrive RX)
+// Documentation for this example can be found here:
+// https://docs.odriverobotics.com/v/latest/guides/arduino-guide.html
+
+
+////////////////////////////////
+// Set up serial pins to the ODrive
+////////////////////////////////
+
+// Below are some sample configurations.
+// You can comment out the default one and uncomment the one you wish to use.
+// You can of course use something different if you like
+// Don't forget to also connect ODrive ISOVDD and ISOGND to Arduino 3.3V/5V and GND.
+
+// Arduino without spare serial ports (such as Arduino UNO) have to use software serial.
+// Note that this is implemented poorly and can lead to wrong data sent or read.
+// pin 8: RX - connect to ODrive TX
+// pin 9: TX - connect to ODrive RX
+SoftwareSerial odrive_serial(8, 9);
+int baudrate = 19200; // Must match what you configure on the ODrive (see docs for details)
+
+// Teensy 3 and 4 (all versions) - Serial1
+// pin 0: RX - connect to ODrive TX
+// pin 1: TX - connect to ODrive RX
+// See https://www.pjrc.com/teensy/td_uart.html for other options on Teensy
+// HardwareSerial& odrive_serial = Serial1;
+// int baudrate = 115200; // Must match what you configure on the ODrive (see docs for details)
+
+// Arduino Mega or Due - Serial1
+// pin 19: RX - connect to ODrive TX
+// pin 18: TX - connect to ODrive RX
+// See https://www.arduino.cc/reference/en/language/functions/communication/serial/ for other options
+// HardwareSerial& odrive_serial = Serial1;
+// int baudrate = 115200; // Must match what you configure on the ODrive (see docs for details)
+
+
 ODriveArduino odrive(odrive_serial);
 
 void setup() {
-  // This baudrate must match the baudrate configured on the ODrive.
-  // Note that the default ODrive baudrate is 115200, so this example requires
-  // to change the baudrate on the ODrive accordingly (see docs for explanation),
-  odrive_serial.begin(19200);
+  odrive_serial.begin(baudrate);
 
-  Serial.begin(115200);
+  Serial.begin(115200); // Serial to PC
   
   delay(10);
 
