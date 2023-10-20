@@ -35,6 +35,7 @@ enum ODriveStreamProtocolType {
 
 // ODrive.Can.Protocol
 enum ODriveProtocol {
+    PROTOCOL_NONE                            = 0x00000000,
     PROTOCOL_SIMPLE                          = 0x00000001,
 };
 
@@ -195,6 +196,9 @@ enum ODriveMotorType {
 enum ODriveCanError {
     CAN_ERROR_NONE                           = 0x00000000,
     CAN_ERROR_DUPLICATE_CAN_IDS              = 0x00000001,
+    CAN_ERROR_BUS_OFF                        = 0x00000002,
+    CAN_ERROR_LOW_LEVEL                      = 0x00000004,
+    CAN_ERROR_PROTOCOL_INIT                  = 0x00000008,
 };
 
 #endif
