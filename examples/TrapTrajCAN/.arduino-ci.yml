@@ -1,0 +1,4 @@
+compile:
+  # TODO: confirm more plateform support
+  platforms:
+    - uno
