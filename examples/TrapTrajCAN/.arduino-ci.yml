@@ -1,0 +1,34 @@
+# See https://github.com/Arduino-CI/arduino_ci/blob/master/REFERENCE.md
+
+compile:
+  platforms:
+    - uno_minima_r4
+
+packages:
+  teensy:teensy:
+    url: https://www.pjrc.com/teensy/package_teensy_index.json
+  arduino:renesas_uno:
+    url: https://downloads.arduino.cc/packages/package_index.json
+
+platforms:
+  uno_minima_r4:
+    board: arduino:renesas_uno:minima
+    package: arduino:renesas_uno
+    gcc:
+      features:
+      defines:
+        - IS_ARDUINO_BUILTIN
+      warnings:
+      flags:
+  teensy41:
+    board: teensy:teensy:teensy41
+    package: teensy:teensy
+    gcc:
+      features:
+      defines:
+        - __IMXRT1062__
+        - ARDUINO_ARCH_TEENSY
+        - TEENSY41
+        - IS_TEENSY_BUILTIN
+      warnings:
+      flags:

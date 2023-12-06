@@ -1,0 +1,6 @@
+
+# Doxygen
+/src/xml
+
+# PlatformIO
+/.pio
