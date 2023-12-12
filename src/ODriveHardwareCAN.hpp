@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ODriveCAN.hpp"
+#include "ODriveCAN.h"
 #include <api/HardwareCAN.h>
 
 // Must be defined by the application

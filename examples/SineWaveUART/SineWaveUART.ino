@@ -1,9 +1,9 @@
  
-#include <ODriveArduino.h>
+#include <ODriveUART.h>
 #include <SoftwareSerial.h>
 
 // Documentation for this example can be found here:
-// https://docs.odriverobotics.com/v/latest/guides/arduino-guide.html
+// https://docs.odriverobotics.com/v/latest/guides/arduino-uart-guide.html
 
 
 ////////////////////////////////
@@ -37,7 +37,7 @@ int baudrate = 19200; // Must match what you configure on the ODrive (see docs f
 // int baudrate = 115200; // Must match what you configure on the ODrive (see docs for details)
 
 
-ODriveArduino odrive(odrive_serial);
+ODriveUART odrive(odrive_serial);
 
 void setup() {
   odrive_serial.begin(baudrate);
@@ -50,6 +50,8 @@ void setup() {
   while (odrive.getState() == AXIS_STATE_UNDEFINED) {
     delay(100);
   }
+
+  Serial.println("found ODrive");
   
   Serial.print("DC voltage: ");
   Serial.println(odrive.getParameterAsFloat("vbus_voltage"));

@@ -1,6 +1,6 @@
 
-#ifndef ODriveArduino_h
-#define ODriveArduino_h
+#ifndef ODriveUART_h
+#define ODriveUART_h
 
 #include "Arduino.h"
 #include "ODriveEnums.h"
@@ -10,13 +10,13 @@ struct ODriveFeedback {
     float vel;
 };
 
-class ODriveArduino {
+class ODriveUART {
 public:
     /**
-     * @brief Constructs an ODriveArduino instance that will communicate over
+     * @brief Constructs an ODriveUART instance that will communicate over
      * the specified serial port.
      */
-    ODriveArduino(Stream& serial);
+    ODriveUART(Stream& serial);
 
     /**
      * @brief Clears the error status of the ODrive and restarts the brake
@@ -106,4 +106,4 @@ private:
     Stream& serial_;
 };
 
-#endif //ODriveArduino_h
+#endif //ODriveUART_h

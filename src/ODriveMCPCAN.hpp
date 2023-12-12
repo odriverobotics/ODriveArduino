@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MCP2515.h"
-#include "ODriveCAN.hpp"
+#include "ODriveCAN.h"
 
 // This is a convenience struct because the MCP2515 library doesn't have a
 // native message type.

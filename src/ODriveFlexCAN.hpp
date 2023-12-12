@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ODriveCAN.hpp"
+#include "ODriveCAN.h"
 #include "FlexCAN_T4.h"
 
 using CanMsg = CAN_message_t;

@@ -1,5 +1,8 @@
+// Author: ODrive Robotics Inc.
+// License: MIT
+// Documentation: https://docs.odriverobotics.com/v/latest/guides/arduino-can-guide.html
 
-#include "ODriveCAN.hpp"
+#include "ODriveCAN.h"
 #include <Arduino.h> // needed for debug printing
 
 bool ODriveCAN::clearErrors() {

@@ -1,9 +1,9 @@
 // Author: ODrive Robotics Inc.
 // License: MIT
-// Documentation: https://docs.odriverobotics.com/v/latest/guides/arduino-guide.html
+// Documentation: https://docs.odriverobotics.com/v/latest/guides/arduino-uart-guide.html
 
 #include "Arduino.h"
-#include "ODriveArduino.h"
+#include "ODriveUART.h"
 
 static const int kMotorNumber = 0;
 
@@ -11,42 +11,42 @@ static const int kMotorNumber = 0;
 template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
 template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(arg, 4); return obj; }
 
-ODriveArduino::ODriveArduino(Stream& serial)
+ODriveUART::ODriveUART(Stream& serial)
     : serial_(serial) {}
 
-void ODriveArduino::clearErrors() {
+void ODriveUART::clearErrors() {
     serial_ << "sc\n";
 }
 
-void ODriveArduino::setPosition(float position) {
+void ODriveUART::setPosition(float position) {
     setPosition(position, 0.0f, 0.0f);
 }
 
-void ODriveArduino::setPosition(float position, float velocity_feedforward) {
+void ODriveUART::setPosition(float position, float velocity_feedforward) {
     setPosition(position, velocity_feedforward, 0.0f);
 }
 
-void ODriveArduino::setPosition(float position, float velocity_feedforward, float torque_feedforward) {
+void ODriveUART::setPosition(float position, float velocity_feedforward, float torque_feedforward) {
     serial_ << "p " << kMotorNumber  << " " << position << " " << velocity_feedforward << " " << torque_feedforward << "\n";
 }
 
-void ODriveArduino::setVelocity(float velocity) {
+void ODriveUART::setVelocity(float velocity) {
     setVelocity(velocity, 0.0f);
 }
 
-void ODriveArduino::setVelocity(float velocity, float torque_feedforward) {
+void ODriveUART::setVelocity(float velocity, float torque_feedforward) {
     serial_ << "v " << kMotorNumber  << " " << velocity << " " << torque_feedforward << "\n";
 }
 
-void ODriveArduino::setTorque(float torque) {
+void ODriveUART::setTorque(float torque) {
     serial_ << "c " << kMotorNumber << " " << torque << "\n";
 }
 
-void ODriveArduino::trapezoidalMove(float position) {
+void ODriveUART::trapezoidalMove(float position) {
     serial_ << "t " << kMotorNumber << " " << position << "\n";
 }
 
-ODriveFeedback ODriveArduino::getFeedback() {
+ODriveFeedback ODriveUART::getFeedback() {
     // Flush RX
     while (serial_.available()) {
         serial_.read();
@@ -67,24 +67,24 @@ ODriveFeedback ODriveArduino::getFeedback() {
     }
 }
 
-String ODriveArduino::getParameterAsString(const String& path) {
+String ODriveUART::getParameterAsString(const String& path) {
     serial_ << "r " << path << "\n";
     return readLine();
 }
 
-void ODriveArduino::setParameter(const String& path, const String& value) {
+void ODriveUART::setParameter(const String& path, const String& value) {
     serial_ << "w " << path << " " << value << "\n";
 }
 
-void ODriveArduino::setState(ODriveAxisState requested_state) {
+void ODriveUART::setState(ODriveAxisState requested_state) {
     setParameter("axis0.requested_state", String((long)requested_state));
 }
 
-ODriveAxisState ODriveArduino::getState() {
+ODriveAxisState ODriveUART::getState() {
     return (ODriveAxisState)getParameterAsInt("axis0.current_state");
 }
 
-String ODriveArduino::readLine(unsigned long timeout_ms) {
+String ODriveUART::readLine(unsigned long timeout_ms) {
     String str = "";
     unsigned long timeout_start = millis();
     for (;;) {

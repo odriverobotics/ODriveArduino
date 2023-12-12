@@ -9,7 +9,7 @@ struct Get_Version_msg_t final {
     constexpr Get_Version_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Get_Version_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Get_Version_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -61,7 +61,7 @@ struct Heartbeat_msg_t final {
     constexpr Heartbeat_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Heartbeat_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Heartbeat_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -101,7 +101,7 @@ struct Estop_msg_t final {
     constexpr Estop_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Estop_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Estop_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -129,7 +129,7 @@ struct Get_Error_msg_t final {
     constexpr Get_Error_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Get_Error_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Get_Error_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -163,7 +163,7 @@ struct Address_msg_t final {
     constexpr Address_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Address_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Address_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -197,7 +197,7 @@ struct Set_Axis_State_msg_t final {
     constexpr Set_Axis_State_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Axis_State_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Axis_State_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -228,7 +228,7 @@ struct Get_Encoder_Estimates_msg_t final {
     constexpr Get_Encoder_Estimates_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Get_Encoder_Estimates_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Get_Encoder_Estimates_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -262,7 +262,7 @@ struct Set_Controller_Mode_msg_t final {
     constexpr Set_Controller_Mode_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Controller_Mode_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Controller_Mode_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -296,7 +296,7 @@ struct Set_Input_Pos_msg_t final {
     constexpr Set_Input_Pos_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Input_Pos_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Input_Pos_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -333,7 +333,7 @@ struct Set_Input_Vel_msg_t final {
     constexpr Set_Input_Vel_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Input_Vel_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Input_Vel_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -367,7 +367,7 @@ struct Set_Input_Torque_msg_t final {
     constexpr Set_Input_Torque_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Input_Torque_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Input_Torque_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -398,7 +398,7 @@ struct Set_Limits_msg_t final {
     constexpr Set_Limits_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Limits_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Limits_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -432,7 +432,7 @@ struct Set_Traj_Vel_Limit_msg_t final {
     constexpr Set_Traj_Vel_Limit_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Traj_Vel_Limit_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Traj_Vel_Limit_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -463,7 +463,7 @@ struct Set_Traj_Accel_Limits_msg_t final {
     constexpr Set_Traj_Accel_Limits_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Traj_Accel_Limits_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Traj_Accel_Limits_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -497,7 +497,7 @@ struct Set_Traj_Inertia_msg_t final {
     constexpr Set_Traj_Inertia_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Traj_Inertia_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Traj_Inertia_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -528,7 +528,7 @@ struct Get_Iq_msg_t final {
     constexpr Get_Iq_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Get_Iq_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Get_Iq_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -562,7 +562,7 @@ struct Get_Temperature_msg_t final {
     constexpr Get_Temperature_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Get_Temperature_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Get_Temperature_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -596,7 +596,7 @@ struct Reboot_msg_t final {
     constexpr Reboot_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Reboot_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Reboot_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -627,7 +627,7 @@ struct Get_Bus_Voltage_Current_msg_t final {
     constexpr Get_Bus_Voltage_Current_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Get_Bus_Voltage_Current_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Get_Bus_Voltage_Current_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -661,7 +661,7 @@ struct Clear_Errors_msg_t final {
     constexpr Clear_Errors_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Clear_Errors_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Clear_Errors_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -692,7 +692,7 @@ struct Set_Absolute_Position_msg_t final {
     constexpr Set_Absolute_Position_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Absolute_Position_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Absolute_Position_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -723,7 +723,7 @@ struct Set_Pos_Gain_msg_t final {
     constexpr Set_Pos_Gain_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Pos_Gain_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Pos_Gain_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -754,7 +754,7 @@ struct Set_Vel_Gains_msg_t final {
     constexpr Set_Vel_Gains_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Set_Vel_Gains_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Set_Vel_Gains_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -788,7 +788,7 @@ struct Get_Torques_msg_t final {
     constexpr Get_Torques_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Get_Torques_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Get_Torques_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -822,7 +822,7 @@ struct Get_Powers_msg_t final {
     constexpr Get_Powers_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Get_Powers_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Get_Powers_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
@@ -856,7 +856,7 @@ struct Enter_DFU_Mode_msg_t final {
     constexpr Enter_DFU_Mode_msg_t() = default;
 
 #ifdef ODRIVE_CAN_MSG_TYPE
-    constexpr Enter_DFU_Mode_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+    Enter_DFU_Mode_msg_t(const TBoard::TCanIntf::TMsg& msg) {
         decode_msg(msg);
     }
 
