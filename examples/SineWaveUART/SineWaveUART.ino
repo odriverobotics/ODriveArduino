@@ -55,7 +55,11 @@ void setup() {
   
   Serial.print("DC voltage: ");
   Serial.println(odrive.getParameterAsFloat("vbus_voltage"));
-  
+
+  // Example of how to set a configuration parameter
+  Serial.print("Setting parameter...");
+  odrive.setParameter("axis0.controller.config.input_filter_bandwidth", 20.0f);
+
   Serial.println("Enabling closed loop control...");
   while (odrive.getState() != AXIS_STATE_CLOSED_LOOP_CONTROL) {
     odrive.clearErrors();

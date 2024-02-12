@@ -87,6 +87,7 @@ public:
     float getParameterAsFloat(const String& path) { return getParameterAsString(path).toFloat(); }
     void setParameter(const String& path, const String& value);
     void setParameter(const String& path, long value) { setParameter(path, String(value)); }
+    void setParameter(const String& path, float value) { setParameter(path, String(value)); }
 
     /**
      * @brief Tells the ODrive to change its axis state.
