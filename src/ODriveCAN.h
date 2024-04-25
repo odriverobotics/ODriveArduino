@@ -9,7 +9,7 @@
 #define REQUEST_PENDING 0xff
 
 #define CREATE_CAN_INTF_WRAPPER(TIntf) \
-    ODriveCanIntfWrapper wrap_can_intf(TIntf& intf) { \
+    static inline ODriveCanIntfWrapper wrap_can_intf(TIntf& intf) { \
         return { \
             &intf, \
             [](void* intf, uint32_t id, uint8_t length, const uint8_t* data) { return sendMsg(*(TIntf*)intf, id, length, data); }, \
