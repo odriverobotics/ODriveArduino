@@ -5,7 +5,7 @@
 
 template <typename T>
 T can_get_signal_raw(const uint8_t* buf, const size_t startBit, const size_t length, const bool isIntel) {
-    constexpr int N = 64;
+    constexpr int N = 8;
 
     union {
         uint64_t tempVal;

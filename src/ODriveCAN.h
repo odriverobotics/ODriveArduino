@@ -85,13 +85,119 @@ public:
     bool setTorque(float torque);
 
     /**
-     * @brief Initiates a trapezoidal trajectory move to a specified position.
+     * @brief Sets the velocity and current limits
      * 
      * This function returns immediately and does not check if the ODrive
      * received the CAN message.
      */
-    bool trapezoidalMove(float position);
+    bool setLimits(float velocity_limit, float current_soft_max);
 
+    /**
+     * @brief Sets the position gain
+     * 
+     * This function returns immediately and does not check if the ODrive
+     * received the CAN message.
+     */
+    bool setPosGain(float pos_gain);
+    
+    /**
+     * @brief Sets the velocity and velocity integrator gains
+     * 
+     * This function returns immediately and does not check if the ODrive
+     * received the CAN message.
+     */
+    bool setVelGains(float vel_gain, float vel_integrator_gain);
+    
+    /**
+     * @brief Sets the encoder's absolute position and enables absolute positioning
+     * 
+     * This function returns immediately and does not check if the ODrive
+     * received the CAN message.
+     */
+    bool setAbsolutePosition(float abs_pos);
+    
+    /**
+     * @brief Sets the coast velocity for subsequent trapezoidal moves
+     * 
+     * This function returns immediately and does not check if the ODrive
+     * received the CAN message.
+     */
+    bool setTrapezoidalVelLimit(float vel_limit);
+    
+    /**
+     * @brief Sets the acceleration and deceleration values for subsequent trapezoidal moves
+     * 
+     * This function returns immediately and does not check if the ODrive
+     * received the CAN message.
+     */
+    bool setTrapezoidalAccelLimits(float accel_limit, float decel_limit);
+
+    /**
+     * @brief Requests motor current.  Iq_measured represents torque-generating current
+     * 
+     * This function will block and wait for up to timeout_ms (default 10msec) for ODrive to reply
+     */
+    bool getCurrents(Get_Iq_msg_t& msg, uint16_t timeout_ms = 10);
+
+    /**
+     * @brief Requests motor temperature 
+     * 
+     * This function will block and wait for up to timeout_ms (default 10msec) for ODrive to reply
+     */
+    bool getTemperature(Get_Temperature_msg_t& msg, uint16_t timeout_ms = 10);
+
+    /**
+     * @brief Requests error information
+     * 
+     * This function will block and wait for up to timeout_ms (default 10msec) for ODrive to reply
+     */
+    bool getError(Get_Error_msg_t& msg, uint16_t timeout_ms = 10);
+
+    /**
+     * @brief Requests hardware and firmware version information
+     * 
+     * This function will block and wait for up to timeout_ms (default 10msec) for ODrive to reply
+     */
+    bool getVersion(Get_Version_msg_t& msg, uint16_t timeout_ms = 10);
+
+    /**
+     * @brief Requests encoder feedback data.  May trigger onFeedback callback if it's registered
+     * 
+     * This function will block and wait for up to timeout_ms (default 10msec) for ODrive to reply
+     */
+    bool getFeedback(Get_Encoder_Estimates_msg_t& msg, uint16_t timeout_ms = 10);
+
+    /**
+     * @brief Requests ODrive DC bus voltage and current
+     * 
+     * This function will block and wait for up to timeout_ms (default 10msec) for ODrive to reply
+     */
+    bool getBusVI(Get_Bus_Voltage_Current_msg_t& msg, uint16_t timeout_ms = 10);
+
+    /**
+     * @brief Requests mechanical and electrical power data (used for spinout detection)
+     * 
+     * This function will block and wait for up to timeout_ms (default 10msec) for ODrive to reply
+     */
+    bool getPower(Get_Powers_msg_t& msg, uint16_t timeout_ms = 10);
+    
+    enum ResetAction {
+        Reboot,
+        SaveConfiguration,
+        EraseConfiguration
+    };
+    
+    /**
+     * @brief Resets the ODrive with the given action
+     * 
+     * Valid actions:
+     *   - Reboot (0)
+     *   - Save (1)
+     *   - Erase (2)
+     *
+     */
+    bool reset(ResetAction action = ResetAction::Reboot);
+    
     /**
      * @brief Registers a callback for ODrive feedback processing.
      */
@@ -136,7 +242,7 @@ public:
      * @brief Sends a specified message over CAN.
      */
     template<typename T>
-    bool send(T& msg) {
+    bool send(const T& msg) {
         uint8_t data[8] = {};
         msg.encode_buf(data);
         return can_intf_.sendMsg(
@@ -144,6 +250,61 @@ public:
             msg.msg_length,
             data
         );
+    }
+
+    /**
+     * @brief Get value at the endpoint
+     * 
+     * @tparam T The data type expected from the endpoint
+     * @param endpoint_id Unique ID from flat_endpoints.json
+     * @param timeout_ms Time to wait for a response from ODrive
+     * 
+     * @return T Data from the endpoint, or 0 on timeout
+     *
+     * Blocks until the response is received or the timeout is reached.
+     *
+     */
+    template <typename T>
+    T getEndpoint(uint16_t endpoint_id, uint16_t timeout_ms = 10) {
+        uint8_t data[8] = {};
+        data[0] = 0; // Opcode read
+
+        // Little-endian endpoint
+        data[1] = (uint8_t)(endpoint_id);
+        data[2] = (uint8_t)(endpoint_id >> 8);
+
+        can_intf_.sendMsg((node_id_ << ODriveCAN::kNodeIdShift) | 0x004, 8, data);
+        if (!awaitMsg(timeout_ms)) return T{};
+
+        T ret{};
+        memcpy(&ret, buffer_[4], sizeof(T));
+        return ret;
+    }
+
+    /**
+     * @brief Set endpoint to value
+     * 
+     * @tparam T Type of the value from flat_endpoints.json
+     * @param endpoint_id Unique ID of endpoint from flat_endpoints.json
+     * @param value value to write to the endpoint
+     *
+     * This function returns immediately and does not check if the ODrive
+     * received the CAN message.
+     */
+    template <typename T>
+    bool setEndpoint(uint16_t endpoint_id, T value) {
+        uint8_t data[8] = {};
+        data[0] = 1; // Opcode write
+
+        // Endpoint
+        data[1] = endpoint_id & 0xFF;
+        data[2] = (endpoint_id >> 8) & 0xFF;
+
+        // Value to write
+        mempcy(&data[4], &value, sizeof(T));
+
+        can_intf_.sendMsg((node_id_ << ODriveCAN::kNodeIdShift) | 0x004, 8, data);
+        return true;
     }
 
 private:
