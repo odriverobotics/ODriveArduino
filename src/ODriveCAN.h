@@ -213,6 +213,14 @@ public:
         axis_state_callback_ = callback; 
         axis_state_user_data_ = user_data;
     }
+    
+    /**
+     * @brief Registers a callback for ODrive torques feedback processing.
+     */
+    void onTorques(void (*callback)(Get_Torques_msg_t& feedback, void* user_data), void* user_data = nullptr) {
+        torques_callback_ = callback; 
+        feedback_user_data_ = user_data;
+    }
 
     /**
      * @brief Processes received CAN messages for the ODrive.
@@ -325,4 +333,5 @@ private:
     
     void (*axis_state_callback_)(Heartbeat_msg_t& feedback, void* user_data) = nullptr;
     void (*feedback_callback_)(Get_Encoder_Estimates_msg_t& feedback, void* user_data) = nullptr;
+    void (*torques_callback_)(Get_Torques_msg_t& feedback, void* user_data) = nullptr;
 };
