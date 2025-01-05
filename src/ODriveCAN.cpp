@@ -4,7 +4,7 @@
 
 #include "ODriveCAN.h"
 
-#include <Arduino.h> // needed for debug printing
+#include <Arduino.h>  // needed for debug printing
 
 bool ODriveCAN::clearErrors() {
     Clear_Errors_msg_t msg;
@@ -137,22 +137,19 @@ bool ODriveCAN::getPower(Get_Powers_msg_t& msg, uint16_t timeout_ms) {
 void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
 #ifdef DEBUG
     int byte_index = length - 1;
-    Serial.println("received:");
-    Serial.print("  id: 0x");
+    Serial.println(F("received:"));
+    Serial.print(F("  id: 0x"));
     Serial.println(id, HEX);
-    Serial.print("  data: 0x");
-    while (byte_index >= 0)
-        Serial.print(msg.data[byte_index--], HEX);
-    Serial.println("");
-#endif // DEBUG
-    if (node_id_ != (id >> ODriveCAN::kNodeIdShift))
-        return;
+    Serial.print(F("  data: 0x"));
+    while (byte_index >= 0) Serial.print(msg.data[byte_index--], HEX);  // msg.data is not defined??
+    Serial.println(F(""));
+#endif  // DEBUG
+    if (node_id_ != (id >> ODriveCAN::kNodeIdShift)) return;
     switch (id & ODriveCAN::kCmdIdBits) {
         case Get_Encoder_Estimates_msg_t::cmd_id: {
             Get_Encoder_Estimates_msg_t estimates;
             estimates.decode_buf(data);
-            if (feedback_callback_)
-                feedback_callback_(estimates, feedback_user_data_);
+            if (feedback_callback_) feedback_callback_(estimates, feedback_user_data_);
             break;
         }
         case Heartbeat_msg_t::cmd_id: {
@@ -161,18 +158,18 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
             if (axis_state_callback_ != nullptr)
                 axis_state_callback_(status, axis_state_user_data_);
             else
-                Serial.println("missing callback");
+#ifdef DEBUG
+                Serial.println(F("missing callback"));
+#endif  // DEBUG
             break;
         }
         default: {
-            if (requested_msg_id_ == REQUEST_PENDING)
-                return;
+            if (requested_msg_id_ == REQUEST_PENDING) return;
 #ifdef DEBUG
-            Serial.print("waiting for: 0x");
+            Serial.print(F("waiting for: 0x"));
             Serial.println(requested_msg_id_, HEX);
-#endif // DEBUG
-            if ((id & ODriveCAN::kCmdIdBits) != requested_msg_id_)
-                return;
+#endif  // DEBUG
+            if ((id & ODriveCAN::kCmdIdBits) != requested_msg_id_) return;
             memcpy(buffer_, data, length);
             requested_msg_id_ = REQUEST_PENDING;
         }
@@ -182,9 +179,8 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
 bool ODriveCAN::awaitMsg(uint16_t timeout) {
     uint64_t start_time = millis();
     while (requested_msg_id_ != REQUEST_PENDING) {
-        can_intf_.pump_events(); // pump event loop while waiting
-        if ((millis() - start_time) > 1000 * timeout)
-            return false;
+        can_intf_.pump_events();  // pump event loop while waiting
+        if ((millis() - start_time) > 1000 * timeout) return false;
     }
     return true;
 }
