@@ -55,6 +55,8 @@ enum ODriveAxisState {
     AXIS_STATE_ENCODER_HALL_POLARITY_CALIBRATION = 12,
     AXIS_STATE_ENCODER_HALL_PHASE_CALIBRATION = 13,
     AXIS_STATE_ANTICOGGING_CALIBRATION       = 14,
+    AXIS_STATE_HARMONIC_CALIBRATION          = 15,
+    AXIS_STATE_HARMONIC_CALIBRATION_COMMUTATION = 16,
 };
 
 // ODrive.Controller.ControlMode
@@ -190,6 +192,14 @@ enum ODriveMotorType {
     MOTOR_TYPE_HIGH_CURRENT                  = 0,
     MOTOR_TYPE_GIMBAL                        = 2,
     MOTOR_TYPE_ACIM                          = 3,
+};
+
+// ODrive.ThermistorMode
+enum ODriveThermistorMode {
+    THERMISTOR_MODE_NTC                      = 1,
+    THERMISTOR_MODE_QUADRATIC                = 2,
+    THERMISTOR_MODE_PT1000                   = 3,
+    THERMISTOR_MODE_KTY84                    = 4,
 };
 
 // ODrive.Can.Error

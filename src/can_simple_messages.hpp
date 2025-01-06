@@ -179,11 +179,13 @@ struct Address_msg_t final {
     void encode_buf(uint8_t* buf) const {
         can_set_signal_raw<uint8_t>(buf, Node_ID, 0, 8, true);
         can_set_signal_raw<uint64_t>(buf, Serial_Number, 8, 48, true);
+        can_set_signal_raw<uint8_t>(buf, Connection_ID, 56, 8, true);
     }
 
     void decode_buf(const uint8_t* buf) {
         Node_ID = can_get_signal_raw<uint8_t>(buf, 0, 8, true);
         Serial_Number = can_get_signal_raw<uint64_t>(buf, 8, 48, true);
+        Connection_ID = can_get_signal_raw<uint8_t>(buf, 56, 8, true);
     }
 
     static const uint8_t cmd_id = 0x006;
@@ -191,6 +193,7 @@ struct Address_msg_t final {
     
     uint8_t Node_ID = 0;
     uint64_t Serial_Number = 0;
+    uint8_t Connection_ID = 0;
 };
 
 struct Set_Axis_State_msg_t final {
@@ -325,8 +328,8 @@ struct Set_Input_Pos_msg_t final {
     static const uint8_t msg_length = 8;
     
     float Input_Pos = 0.0f; // [rev]
-    float Vel_FF = 0.0f; // [rev/s]
-    float Torque_FF = 0.0f; // [Nm]
+    float Vel_FF = 0.0f; // [rev/s (default) [#vel-ff-scale]_]
+    float Torque_FF = 0.0f; // [Nm (default) [#torque-ff-scale]_]
 };
 
 struct Set_Input_Vel_msg_t final {
