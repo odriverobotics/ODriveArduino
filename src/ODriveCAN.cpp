@@ -137,13 +137,13 @@ bool ODriveCAN::getPower(Get_Powers_msg_t& msg, uint16_t timeout_ms) {
 void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
 #ifdef DEBUG
     int byte_index = length - 1;
-    Serial.println("received:");
-    Serial.print("  id: 0x");
+    Serial.println(F("received:"));
+    Serial.print(F("  id: 0x"));
     Serial.println(id, HEX);
-    Serial.print("  data: 0x");
+    Serial.print(F("  data: 0x"));
     while (byte_index >= 0)
         Serial.print(msg.data[byte_index--], HEX);
-    Serial.println("");
+    Serial.println(F(""));
 #endif // DEBUG
     if (node_id_ != (id >> ODriveCAN::kNodeIdShift))
         return;
@@ -161,14 +161,14 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
             if (axis_state_callback_ != nullptr)
                 axis_state_callback_(status, axis_state_user_data_);
             else
-                Serial.println("missing callback");
+                Serial.println(F("missing callback"));
             break;
         }
         default: {
             if (requested_msg_id_ == REQUEST_PENDING)
                 return;
 #ifdef DEBUG
-            Serial.print("waiting for: 0x");
+            Serial.print(F("waiting for: 0x"));
             Serial.println(requested_msg_id_, HEX);
 #endif // DEBUG
             if ((id & ODriveCAN::kCmdIdBits) != requested_msg_id_)
