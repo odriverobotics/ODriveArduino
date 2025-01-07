@@ -15,7 +15,7 @@ ODriveUART::ODriveUART(Stream& serial)
     : serial_(serial) {}
 
 void ODriveUART::clearErrors() {
-    serial_ << "sc\n";
+    serial_ << F("sc\n");
 }
 
 void ODriveUART::setPosition(float position) {
@@ -27,7 +27,7 @@ void ODriveUART::setPosition(float position, float velocity_feedforward) {
 }
 
 void ODriveUART::setPosition(float position, float velocity_feedforward, float torque_feedforward) {
-    serial_ << "p " << kMotorNumber  << " " << position << " " << velocity_feedforward << " " << torque_feedforward << "\n";
+    serial_ << F("p ") << kMotorNumber  << F(" ") << position << F(" ") << velocity_feedforward << F(" ") << torque_feedforward << F("\n");
 }
 
 void ODriveUART::setVelocity(float velocity) {
@@ -35,15 +35,15 @@ void ODriveUART::setVelocity(float velocity) {
 }
 
 void ODriveUART::setVelocity(float velocity, float torque_feedforward) {
-    serial_ << "v " << kMotorNumber  << " " << velocity << " " << torque_feedforward << "\n";
+    serial_ << F("v ") << kMotorNumber  << F(" ") << velocity << F(" ") << torque_feedforward << F("\n");
 }
 
 void ODriveUART::setTorque(float torque) {
-    serial_ << "c " << kMotorNumber << " " << torque << "\n";
+    serial_ << F("c ") << kMotorNumber << F(" ") << torque << F("\n");
 }
 
 void ODriveUART::trapezoidalMove(float position) {
-    serial_ << "t " << kMotorNumber << " " << position << "\n";
+    serial_ << F("t ") << kMotorNumber << F(" ") << position << F("\n");
 }
 
 ODriveFeedback ODriveUART::getFeedback() {
@@ -52,7 +52,7 @@ ODriveFeedback ODriveUART::getFeedback() {
         serial_.read();
     }
 
-    serial_ << "f " << kMotorNumber << "\n";
+    serial_ << F("f ") << kMotorNumber << F("\n");
 
     String response = readLine();
 
@@ -68,20 +68,20 @@ ODriveFeedback ODriveUART::getFeedback() {
 }
 
 String ODriveUART::getParameterAsString(const String& path) {
-    serial_ << "r " << path << "\n";
+    serial_ << F("r ") << path << F("\n");
     return readLine();
 }
 
 void ODriveUART::setParameter(const String& path, const String& value) {
-    serial_ << "w " << path << " " << value << "\n";
+    serial_ << F("w ") << path << F(" ") << value << F("\n");
 }
 
 void ODriveUART::setState(ODriveAxisState requested_state) {
-    setParameter("axis0.requested_state", String((long)requested_state));
+    setParameter(F("axis0.requested_state"), String((long)requested_state));
 }
 
 ODriveAxisState ODriveUART::getState() {
-    return (ODriveAxisState)getParameterAsInt("axis0.current_state");
+    return (ODriveAxisState)getParameterAsInt(F("axis0.current_state"));
 }
 
 String ODriveUART::readLine(unsigned long timeout_ms) {
