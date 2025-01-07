@@ -163,6 +163,7 @@ enum ODriveSpiEncoderMode {
     SPI_ENCODER_MODE_MA732                   = 5,
     SPI_ENCODER_MODE_TLE                     = 6,
     SPI_ENCODER_MODE_BISSC                   = 7,
+    SPI_ENCODER_MODE_NOVOHALL                = 8,
 };
 
 // ODrive.Rs485EncoderMode
