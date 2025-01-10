@@ -244,6 +244,9 @@ void setup() {
 
 void loop() {
   pumpEvents(can_intf); // This is required on some platforms to handle incoming feedback CAN messages
+                        // Note that on MCP2515-based platforms, this will delay for a fixed 10ms.
+                        // This has been found to reduce the number of dropped messages, however it can be removed
+                        // for applications requiring loop times over 100Hz.
 
   float SINE_PERIOD = 2.0f; // Period of the position command sine wave in seconds
 
