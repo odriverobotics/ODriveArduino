@@ -219,7 +219,7 @@ public:
      */
     void onTorques(void (*callback)(Get_Torques_msg_t& feedback, void* user_data), void* user_data = nullptr) {
         torques_callback_ = callback; 
-        feedback_user_data_ = user_data;
+        torques_user_data_ = user_data;
     }
 
     /**
@@ -330,6 +330,7 @@ private:
 
     void* axis_state_user_data_;
     void* feedback_user_data_;
+    void* torques_user_data_;
     
     void (*axis_state_callback_)(Heartbeat_msg_t& feedback, void* user_data) = nullptr;
     void (*feedback_callback_)(Get_Encoder_Estimates_msg_t& feedback, void* user_data) = nullptr;
