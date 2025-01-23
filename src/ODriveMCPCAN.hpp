@@ -38,7 +38,7 @@ static void pumpEvents(MCP2515Class& intf) {
     //
     // A 10ms delay was found to reduce the number of dropped messages, however a
     // specific root cause has not been identified, and may be a quirk in the MCP2515.
-    delay(10); 
+    delay(10);
 }
 
 CREATE_CAN_INTF_WRAPPER(MCP2515Class)
