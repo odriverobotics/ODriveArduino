@@ -155,6 +155,13 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
                 feedback_callback_(estimates, feedback_user_data_);
             break;
         }
+        case Get_Torques_msg_t::cmd_id: {
+            Get_Torques_msg_t estimates;
+            estimates.decode_buf(data);
+            if (torques_callback_)
+                torques_callback_(estimates, torques_user_data_);
+            break;
+        }
         case Heartbeat_msg_t::cmd_id: {
             Heartbeat_msg_t status;
             status.decode_buf(data);
