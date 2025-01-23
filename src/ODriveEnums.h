@@ -201,6 +201,7 @@ enum ODriveThermistorMode {
     THERMISTOR_MODE_QUADRATIC                = 2,
     THERMISTOR_MODE_PT1000                   = 3,
     THERMISTOR_MODE_KTY84                    = 4,
+    THERMISTOR_MODE_KTY83_122                = 5,
 };
 
 // ODrive.Can.Error

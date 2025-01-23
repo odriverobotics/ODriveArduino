@@ -35,10 +35,10 @@ static void onReceive(const CanMsg& msg, ODriveCAN& odrive) {
 static void pumpEvents(MCP2515Class& intf) {
     // On other platforms, this polls and processes incoming CAN messages.
     // However, this is not possible on MCP2515-based platforms.
-
+    //
     // A 10ms delay was found to reduce the number of dropped messages, however a
     // specific root cause has not been identified, and may be a quirk in the MCP2515.
-    delay(10);
+    delay(10); 
 }
 
 CREATE_CAN_INTF_WRAPPER(MCP2515Class)
