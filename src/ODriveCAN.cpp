@@ -186,11 +186,11 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
     }
 }
 
-bool ODriveCAN::awaitMsg(uint16_t timeout) {
-    uint64_t start_time = millis();
+bool ODriveCAN::awaitMsg(uint16_t timeout_ms) {
+    uint64_t start_time = micros();
     while (requested_msg_id_ != REQUEST_PENDING) {
         can_intf_.pump_events(); // pump event loop while waiting
-        if ((millis() - start_time) > 1000 * timeout)
+        if ((micros() - start_time) > (1000 * timeout_ms))
             return false;
     }
     return true;
