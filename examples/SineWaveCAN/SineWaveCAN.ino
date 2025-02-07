@@ -227,7 +227,7 @@ void setup() {
   Serial.println("Waiting for ODrive...");
   while (!odrv0_user_data.received_heartbeat) {
     pumpEvents(can_intf);
-    delay(50);
+    delay(100);
   }
 
   Serial.println("found ODrive");
@@ -251,7 +251,7 @@ void setup() {
     odrv0.clearErrors();
     delay(1);
     
-    odrv0.setState(ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL); //test commande manuelle
+    odrv0.setState(ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL);
 
     // Pump events for 150ms. This delay is needed for two reasons;
     // 1. If there is an error condition, such as missing DC power, the ODrive might
@@ -272,7 +272,11 @@ void setup() {
 
 void loop() {
   pumpEvents(can_intf); // This is required on some platforms to handle incoming feedback CAN messages
-
+                        // Note that on MCP2515-based platforms, this will delay for a fixed 10ms.
+                        //
+                        // This has been found to reduce the number of dropped messages, however it can be removed
+                        // for applications requiring loop times over 100Hz.
+                        
   float SINE_PERIOD = 2.0f; // Period of the position command sine wave in seconds
 
   float t = 0.001 * millis();
