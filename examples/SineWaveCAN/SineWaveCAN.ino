@@ -1,141 +1,165 @@
-
-#include <Arduino.h>
 #include "ODriveCAN.h"
-
 // Documentation for this example can be found here:
 // https://docs.odriverobotics.com/v/latest/guides/arduino-can-guide.html
 
-
 /* Configuration of example sketch -------------------------------------------*/
 
-// CAN bus baudrate. Make sure this matches for every device on the bus
-#define CAN_BAUDRATE 250000
+  // CAN bus baudrate. Make sure this matches for every device on the bus
+  #define CAN_BAUDRATE 250000
 
-// ODrive node_id for odrv0
-#define ODRV0_NODE_ID 0
+  // ODrive node_id for odrv0
+  #define ODRV0_NODE_ID 31
 
-// Uncomment below the line that corresponds to your hardware.
-// See also "Board-specific settings" to adapt the details for your hardware setup.
 
-// #define IS_TEENSY_BUILTIN // Teensy boards with built-in CAN interface (e.g. Teensy 4.1). See below to select which interface to use.
-// #define IS_ARDUINO_BUILTIN // Arduino boards with built-in CAN interface (e.g. Arduino Uno R4 Minima)
-// #define IS_MCP2515 // Any board with external MCP2515 based extension module. See below to configure the module.
+  // Uncomment below the line that corresponds to your hardware.
+  // See also "Board-specific settings" to adapt the details for your hardware setup.
+
+  // #define IS_TEENSY_BUILTIN // Teensy boards with built-in CAN interface (e.g. Teensy 4.1). See below to select which interface to use.
+  // #define IS_ARDUINO_BUILTIN // Arduino boards with built-in CAN interface (e.g. Arduino Uno R4 Minima)
+  // #define IS_MCP2515 // Any board with external MCP2515 based extension module. See below to configure the module.
+  #define IS_ESP32_TWAI // Any board with external MCP2515 based extension module. See below to configure the module.
 
 
 /* Board-specific includes ---------------------------------------------------*/
 
-#if defined(IS_TEENSY_BUILTIN) + defined(IS_ARDUINO_BUILTIN) + defined(IS_MCP2515) != 1
-#warning "Select exactly one hardware option at the top of this file."
+  #if defined(IS_TEENSY_BUILTIN) + defined(IS_ARDUINO_BUILTIN) + defined(IS_MCP2515) + defined(IS_ESP32_TWAI) != 1
+  #warning "Select exactly one hardware option at the top of this file."
 
-#if CAN_HOWMANY > 0 || CANFD_HOWMANY > 0
-#define IS_ARDUINO_BUILTIN
-#warning "guessing that this uses HardwareCAN"
-#else
-#error "cannot guess hardware version"
-#endif
+  #if CAN_HOWMANY > 0 || CANFD_HOWMANY > 0
+  #define IS_ARDUINO_BUILTIN
+  #warning "guessing that this uses HardwareCAN"
+  #else
+  #error "cannot guess hardware version"
+  #endif
 
-#endif
+  #endif
 
-#ifdef IS_ARDUINO_BUILTIN
-// See https://github.com/arduino/ArduinoCore-API/blob/master/api/HardwareCAN.h
-// and https://github.com/arduino/ArduinoCore-renesas/tree/main/libraries/Arduino_CAN
+  #ifdef IS_ARDUINO_BUILTIN
+  // See https://github.com/arduino/ArduinoCore-API/blob/master/api/HardwareCAN.h
+  // and https://github.com/arduino/ArduinoCore-renesas/tree/main/libraries/Arduino_CAN
 
-#include <Arduino_CAN.h>
-#include <ODriveHardwareCAN.hpp>
-#endif // IS_ARDUINO_BUILTIN
+  #include <Arduino_CAN.h>
+  #include <ODriveHardwareCAN.hpp>
+  #endif // IS_ARDUINO_BUILTIN
 
-#ifdef IS_MCP2515
-// See https://github.com/sandeepmistry/arduino-CAN/
-#include "MCP2515.h"
-#include "ODriveMCPCAN.hpp"
-#endif // IS_MCP2515
+  #ifdef IS_MCP2515
+  // See https://github.com/sandeepmistry/arduino-CAN/
+  #include "MCP2515.h"
+  #include "ODriveMCPCAN.hpp"
+  #endif // IS_MCP2515
 
-#ifdef IS_TEENSY_BUILTIN
-// See https://github.com/tonton81/FlexCAN_T4
-// clone https://github.com/tonton81/FlexCAN_T4.git into /src
-#include <FlexCAN_T4.h>
-#include "ODriveFlexCAN.hpp"
-struct ODriveStatus; // hack to prevent teensy compile error
-#endif // IS_TEENSY_BUILTIN
+  #ifdef IS_TEENSY_BUILTIN
+  // See https://github.com/tonton81/FlexCAN_T4
+  // clone https://github.com/tonton81/FlexCAN_T4.git into /src
+  #include <FlexCAN_T4.h>
+  #include "ODriveFlexCAN.hpp"
+  struct ODriveStatus; // hack to prevent teensy compile error
+  #endif // IS_TEENSY_BUILTIN
 
+  #ifdef IS_ESP32_TWAI
+  // See https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/twai.html
+  // https://github.com/espressif/arduino-esp32/tree/master/libraries/ESP32/examples/TWAI
 
+    #define RX_PIN 35
+    #define TX_PIN 36    
+    #define TRANSMIT_RATE_MS 50
+    #define POLLING_RATE_MS 50
+  #include "driver/twai.h"
+  //probably not the best place to put this, but it is needed to be defined before calling ODriveESP32TWAI.hpp *******************move to ODriveESP32.hpp?
+    // Interval:
 
+  #include "ODriveESP32TWAI.hpp"
+  //****vérifier si requis pour ESP32****// struct ODriveStatus; // hack to prevent teensy compile error
+  #endif // IS_ESP32_TWAI
 
 /* Board-specific settings ---------------------------------------------------*/
+  /* Teensy */
+    #ifdef IS_TEENSY_BUILTIN
+
+    FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can_intf;
+
+    bool setupCan() {
+      can_intf.begin();
+      can_intf.setBaudRate(CAN_BAUDRATE);
+      can_intf.setMaxMB(16);
+      can_intf.enableFIFO();
+      can_intf.enableFIFOInterrupt();
+      can_intf.onReceive(onCanMessage);
+      return true;
+    }
+
+    #endif // IS_TEENSY_BUILTIN
+
+  /* MCP2515-based extension modules -*/
+    #ifdef IS_MCP2515
+
+    MCP2515Class& can_intf = CAN;
+
+    // chip select pin used for the MCP2515
+    #define MCP2515_CS 10
+
+    // interrupt pin used for the MCP2515
+    // NOTE: not all Arduino pins are interruptable, check the documentation for your board!
+    #define MCP2515_INT 2
+
+    // freqeuncy of the crystal oscillator on the MCP2515 breakout board. 
+    // common values are: 16 MHz, 12 MHz, 8 MHz
+    #define MCP2515_CLK_HZ 8000000
 
 
-/* Teensy */
+    static inline void receiveCallback(int packet_size) {
+      if (packet_size > 8) {
+        return; // not supported
+      }
+      CanMsg msg = {.id = (unsigned int)CAN.packetId(), .len = (uint8_t)packet_size};
+      CAN.readBytes(msg.buffer, packet_size);
+      onCanMessage(msg);
+    }
 
-#ifdef IS_TEENSY_BUILTIN
+    bool setupCan() {
+      // configure and initialize the CAN bus interface
+      CAN.setPins(MCP2515_CS, MCP2515_INT);
+      CAN.setClockFrequency(MCP2515_CLK_HZ);
+      if (!CAN.begin(CAN_BAUDRATE)) {
+        return false;
+      }
 
-FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can_intf;
+      CAN.onReceive(receiveCallback);
+      return true;
+    }
 
-bool setupCan() {
-  can_intf.begin();
-  can_intf.setBaudRate(CAN_BAUDRATE);
-  can_intf.setMaxMB(16);
-  can_intf.enableFIFO();
-  can_intf.enableFIFOInterrupt();
-  can_intf.onReceive(onCanMessage);
-  return true;
-}
+    #endif // IS_MCP2515
 
-#endif // IS_TEENSY_BUILTIN
-
-
-/* MCP2515-based extension modules -*/
-
-#ifdef IS_MCP2515
-
-MCP2515Class& can_intf = CAN;
-
-// chip select pin used for the MCP2515
-#define MCP2515_CS 10
-
-// interrupt pin used for the MCP2515
-// NOTE: not all Arduino pins are interruptable, check the documentation for your board!
-#define MCP2515_INT 2
-
-// freqeuncy of the crystal oscillator on the MCP2515 breakout board. 
-// common values are: 16 MHz, 12 MHz, 8 MHz
-#define MCP2515_CLK_HZ 8000000
+  /* ESP32 board using native TWAI driver */
+    #ifdef IS_ESP32_TWAI
 
 
-static inline void receiveCallback(int packet_size) {
-  if (packet_size > 8) {
-    return; // not supported
-  }
-  CanMsg msg = {.id = (unsigned int)CAN.packetId(), .len = (uint8_t)packet_size};
-  CAN.readBytes(msg.buffer, packet_size);
-  onCanMessage(msg);
-}
 
-bool setupCan() {
-  // configure and initialize the CAN bus interface
-  CAN.setPins(MCP2515_CS, MCP2515_INT);
-  CAN.setClockFrequency(MCP2515_CLK_HZ);
-  if (!CAN.begin(CAN_BAUDRATE)) {
-    return false;
-  }
+      //TWAIClass& can_intf = CAN; //**** not sure if i can actually comment this out. //
+      TWAIClass can_intf;
 
-  CAN.onReceive(receiveCallback);
-  return true;
-}
-
-#endif // IS_MCP2515
+      // Pins used to connect to CAN bus transceiver:
 
 
-/* Arduinos with built-in CAN */
+      bool setupCan() {
+      if (!can_intf.begin(CAN_BAUDRATE)) {
+        return false;
+      }
+        return true;
+      }
 
-#ifdef IS_ARDUINO_BUILTIN
+    #endif // IS_ESP32_TWAI
 
-HardwareCAN& can_intf = CAN;
+  /* Arduinos with built-in CAN */
+    #ifdef IS_ARDUINO_BUILTIN
 
-bool setupCan() {
-  return can_intf.begin((CanBitRate)CAN_BAUDRATE);
-}
+    HardwareCAN& can_intf = CAN;
 
-#endif
+    bool setupCan() {
+      return can_intf.begin((CanBitRate)CAN_BAUDRATE);
+    }
+
+    #endif
 
 
 /* Example sketch ------------------------------------------------------------*/
@@ -175,16 +199,17 @@ void onCanMessage(const CanMsg& msg) {
   }
 }
 
+
+
 void setup() {
   Serial.begin(115200);
-
-  // Wait for up to 3 seconds for the serial port to be opened on the PC side.
-  // If no PC connects, continue anyway.
-  for (int i = 0; i < 30 && !Serial; ++i) {
-    delay(100);
+  long current_millis = 0;
+  while(!Serial){ 
+    if (millis() > current_millis + 3000){ //check for connection for 3 seconds
+      break; //Break when connection found
+    }
   }
-  delay(200);
-
+  Serial.println("Serial ok");
 
   Serial.println("Starting ODriveCAN demo");
 
@@ -202,7 +227,7 @@ void setup() {
   Serial.println("Waiting for ODrive...");
   while (!odrv0_user_data.received_heartbeat) {
     pumpEvents(can_intf);
-    delay(100);
+    delay(50);
   }
 
   Serial.println("found ODrive");
@@ -222,9 +247,11 @@ void setup() {
 
   Serial.println("Enabling closed loop control...");
   while (odrv0_user_data.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL) {
+
     odrv0.clearErrors();
     delay(1);
-    odrv0.setState(ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL);
+    
+    odrv0.setState(ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL); //test commande manuelle
 
     // Pump events for 150ms. This delay is needed for two reasons;
     // 1. If there is an error condition, such as missing DC power, the ODrive might
@@ -240,14 +267,11 @@ void setup() {
   }
 
   Serial.println("ODrive running!");
+  
 }
 
 void loop() {
   pumpEvents(can_intf); // This is required on some platforms to handle incoming feedback CAN messages
-                        // Note that on MCP2515-based platforms, this will delay for a fixed 10ms.
-                        //
-                        // This has been found to reduce the number of dropped messages, however it can be removed
-                        // for applications requiring loop times over 100Hz.
 
   float SINE_PERIOD = 2.0f; // Period of the position command sine wave in seconds
 
