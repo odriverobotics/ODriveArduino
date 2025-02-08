@@ -18,6 +18,9 @@ public:
      */
     ODriveUART(Stream& serial);
 
+    void selectAxis(int axis);
+    int getAxis();
+
     /**
      * @brief Clears the error status of the ODrive and restarts the brake
      * resistor if it was disabled due to an error.
