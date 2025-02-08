@@ -19,7 +19,7 @@ void ODriveUART::clearErrors() {
 }
 
 void ODriveUART::selectAxis(int axis){
-    if(axis > 0 && axis < 2){
+    if(axis >= 0 && axis < 2){
         kMotorNumber = axis;
     }
 }
