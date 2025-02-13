@@ -5,8 +5,6 @@
 #include "Arduino.h"
 #include "ODriveUART.h"
 
-static int kMotorNumber = 0;
-
 // Print with stream operator
 template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
 template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(arg, 4); return obj; }
@@ -15,17 +13,17 @@ ODriveUART::ODriveUART(Stream& serial)
     : serial_(serial) {}
 
 void ODriveUART::clearErrors() {
-    serial_ << "sc\n";
+    serial_ << F("sc\n");
 }
 
 void ODriveUART::selectAxis(int axis){
     if(axis >= 0 && axis < 2){
-        kMotorNumber = axis;
+        selected_axis = axis;
     }
 }
 
 int ODriveUART::getAxis(){
-    return kMotorNumber;
+    return selected_axis;
 }
 
 void ODriveUART::setPosition(float position) {
@@ -37,7 +35,7 @@ void ODriveUART::setPosition(float position, float velocity_feedforward) {
 }
 
 void ODriveUART::setPosition(float position, float velocity_feedforward, float torque_feedforward) {
-    serial_ << "p " << kMotorNumber  << " " << position << " " << velocity_feedforward << " " << torque_feedforward << "\n";
+    serial_ << F("p ") << selected_axis  << F(" ") << position << F(" ") << velocity_feedforward << F(" ") << torque_feedforward << F("\n");
 }
 
 void ODriveUART::setVelocity(float velocity) {
@@ -45,15 +43,15 @@ void ODriveUART::setVelocity(float velocity) {
 }
 
 void ODriveUART::setVelocity(float velocity, float torque_feedforward) {
-    serial_ << "v " << kMotorNumber  << " " << velocity << " " << torque_feedforward << "\n";
+    serial_ << F("v ") << selected_axis  << F(" ") << velocity << F(" ") << torque_feedforward << F("\n");
 }
 
 void ODriveUART::setTorque(float torque) {
-    serial_ << "c " << kMotorNumber << " " << torque << "\n";
+    serial_ << F("c ") << selected_axis << F(" ") << torque << F("\n");
 }
 
 void ODriveUART::trapezoidalMove(float position) {
-    serial_ << "t " << kMotorNumber << " " << position << "\n";
+    serial_ << F("t ") << selected_axis << F(" ") << position << F("\n");
 }
 
 ODriveFeedback ODriveUART::getFeedback() {
@@ -62,7 +60,7 @@ ODriveFeedback ODriveUART::getFeedback() {
         serial_.read();
     }
 
-    serial_ << "f " << kMotorNumber << "\n";
+    serial_ << F("f ") << selected_axis << F("\n");
 
     String response = readLine();
 
@@ -78,22 +76,22 @@ ODriveFeedback ODriveUART::getFeedback() {
 }
 
 String ODriveUART::getParameterAsString(const String& path) {
-    serial_ << "r " << path << "\n";
+    serial_ << F("r ") << path << F("\n");
     return readLine();
 }
 
 void ODriveUART::setParameter(const String& path, const String& value) {
-    serial_ << "w " << path << " " << value << "\n";
+    serial_ << F("w ") << path << F(" ") << value << F("\n");
 }
 
 void ODriveUART::setState(ODriveAxisState requested_state) {
-    if(kMotorNumber == 0) setParameter("axis0.requested_state", String((long)requested_state));
-    if(kMotorNumber == 1) setParameter("axis1.requested_state", String((long)requested_state));
+    String parameter = "axis" + String(selected_axis) + ".requested_state";
+    setParameter(parameter, String((long)requested_state));
 }
 
 ODriveAxisState ODriveUART::getState() {
-    if(kMotorNumber == 0) return (ODriveAxisState)getParameterAsInt("axis0.current_state");
-    if(kMotorNumber == 1) return (ODriveAxisState)getParameterAsInt("axis1.current_state");
+    String parameter = "axis" + String(selected_axis) + ".current_state";
+    return (ODriveAxisState)getParameterAsInt(parameter);
 }
 
 String ODriveUART::readLine(unsigned long timeout_ms) {
