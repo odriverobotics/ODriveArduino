@@ -19,6 +19,16 @@ public:
     ODriveUART(Stream& serial);
 
     /**
+     * @brief (Only ODrive 3.6) Select which axis to controll
+     */
+    void selectAxis(int axis);
+    
+    /**
+     * @brief (Only ODrive 3.6) Check which axis is selected
+     */
+    int getAxis();
+
+    /**
      * @brief Clears the error status of the ODrive and restarts the brake
      * resistor if it was disabled due to an error.
      */
@@ -101,6 +111,8 @@ public:
     ODriveAxisState getState();
 
 private:
+    int selected_axis = 0;
+
     String readLine(unsigned long timeout_ms = 10);
 
     Stream& serial_;
