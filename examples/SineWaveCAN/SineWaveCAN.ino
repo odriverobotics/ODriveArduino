@@ -210,7 +210,7 @@ void setup() {
   // request bus voltage and current (1sec timeout)
   Serial.println("attempting to read bus voltage and current");
   Get_Bus_Voltage_Current_msg_t vbus;
-  if (!odrv0.request(vbus, 1)) {
+  if (!odrv0.request(vbus, 1000)) {
     Serial.println("vbus request failed!");
     while (true); // spin indefinitely
   }
