@@ -1,8 +1,6 @@
 #ifndef TWAI_CAN_CLASS_H
 #define TWAI_CAN_CLASS_H
 
-//#include "driver/twai.h"
-
 class TWAIClass {
 public:
     TWAIClass() : is_initialized(false) {}
@@ -16,20 +14,49 @@ bool begin(long baudRate) {
     if (is_initialized) return false;  // Already initialized
     
     // Configure TWAI (CAN) settings
-    twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)TX_PIN, (gpio_num_t)RX_PIN, TWAI_MODE_NORMAL);
-    //TODO ADD SWITCH CASE FOR DIFFERENT BAUDRATE****************************************************************************************************************
-    twai_timing_config_t t_config = TWAI_TIMING_CONFIG_250KBITS();  // Ensure it matches ODrive
+    // Select baud rate using switch-case. Ensure it matches ODrive configuration
+    twai_timing_config_t t_config;
+    switch (baudRate) {
+        case 1000000:
+            t_config = TWAI_TIMING_CONFIG_1MBITS();
+            break;
+        case 800000:
+            t_config = TWAI_TIMING_CONFIG_800KBITS();
+            break;
+        case 500000:
+            t_config = TWAI_TIMING_CONFIG_500KBITS();
+            break;
+        case 250000:
+            t_config = TWAI_TIMING_CONFIG_250KBITS();
+            break;
+        case 125000:
+            t_config = TWAI_TIMING_CONFIG_125KBITS();
+            break;
+        case 100000:
+            t_config = TWAI_TIMING_CONFIG_100KBITS();
+            break;
+        case 50000:
+            t_config = TWAI_TIMING_CONFIG_50KBITS();
+            break;
+        case 25000:
+            t_config = TWAI_TIMING_CONFIG_25KBITS();
+            break;
+        default:
+            Serial.println("Unsupported baud rate! Defaulting to 250Kbps.");
+            t_config = TWAI_TIMING_CONFIG_250KBITS();
+            break;
+    }    
     twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
 
     // Install the TWAI driver
     if (twai_driver_install(&g_config, &t_config, &f_config) != ESP_OK) {
-        Serial.println("❌ TWAI Driver install failed!");
+        Serial.println("TWAI Driver install failed!");
         return false;
     }
 
     // Start TWAI driver
     if (twai_start() != ESP_OK) {
-        Serial.println("❌ TWAI Driver start failed!");
+        Serial.println("TWAI Driver start failed!");
         twai_driver_uninstall();
         return false;
     }
@@ -38,11 +65,11 @@ bool begin(long baudRate) {
     uint32_t alerts_to_enable = TWAI_ALERT_TX_IDLE | TWAI_ALERT_TX_SUCCESS | 
                                 TWAI_ALERT_TX_FAILED | TWAI_ALERT_ERR_PASS | TWAI_ALERT_BUS_ERROR;
     if (twai_reconfigure_alerts(alerts_to_enable, NULL) != ESP_OK) {
-        Serial.println("❌ Failed to configure CAN Alerts!");
+        Serial.println("Failed to configure CAN Alerts!");
         return false;
     }
 
-    Serial.println("✅ TWAI CAN Bus Started Successfully!");
+    Serial.println("TWAI CAN Bus Started Successfully!");
     is_initialized = true;
     return true;
 }
