@@ -14,6 +14,7 @@ public:
   bool begin(long baudRate) {
     if (is_initialized) return false;  // Already initialized
     // Configure TWAI (CAN) settings
+    twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)TX_PIN, (gpio_num_t)RX_PIN, TWAI_MODE_NORMAL);
     // Select baud rate using switch-case. Ensure it matches ODrive configuration
     twai_timing_config_t t_config;
     switch (baudRate) {
