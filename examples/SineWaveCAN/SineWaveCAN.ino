@@ -59,17 +59,15 @@
   #ifdef IS_ESP32_TWAI
   // See https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/twai.html
   // https://github.com/espressif/arduino-esp32/tree/master/libraries/ESP32/examples/TWAI
-
+    // Pins used to connect to CAN bus transceiver:
     #define RX_PIN 35
     #define TX_PIN 36    
     #define TRANSMIT_RATE_MS 50
     #define POLLING_RATE_MS 50
   #include "driver/twai.h"
-  //probably not the best place to put this, but it is needed to be defined before calling ODriveESP32TWAI.hpp *******************move to ODriveESP32.hpp?
-    // Interval:
+
 
   #include "ODriveESP32TWAI.hpp"
-  //****vérifier si requis pour ESP32****// struct ODriveStatus; // hack to prevent teensy compile error
   #endif // IS_ESP32_TWAI
 
 /* Board-specific settings ---------------------------------------------------*/
@@ -133,18 +131,12 @@
   /* ESP32 board using native TWAI driver */
     #ifdef IS_ESP32_TWAI
 
-
-
-      //TWAIClass& can_intf = CAN; //**** not sure if i can actually comment this out. //
       TWAIClass can_intf;
 
-      // Pins used to connect to CAN bus transceiver:
-
-
       bool setupCan() {
-      if (!can_intf.begin(CAN_BAUDRATE)) {
-        return false;
-      }
+        if (!can_intf.begin(CAN_BAUDRATE)) {
+          return false;
+        }
         return true;
       }
 
@@ -205,7 +197,7 @@ void setup() {
   Serial.begin(115200);
   long current_millis = 0;
   while(!Serial){ 
-    if (millis() > current_millis + 3000){ //check for connection for 3 seconds
+    if ((millis() - current_millis)  > 3000){ //check for connection for 3 seconds
       break; //Break when connection found
     }
   }
