@@ -8,7 +8,7 @@
   #define CAN_BAUDRATE 250000
 
   // ODrive node_id for odrv0
-  #define ODRV0_NODE_ID 31
+  #define ODRV0_NODE_ID 0
 
 
   // Uncomment below the line that corresponds to your hardware.
