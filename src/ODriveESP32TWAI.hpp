@@ -15,7 +15,7 @@ struct CanMsg {
 void onCanMessage(const CanMsg& msg);
 
 
-static bool sendMsg(TWAIClass& can_intf, uint32_t id, uint8_t length, const uint8_t* data) {
+static inline bool sendMsg(TWAIClass& can_intf, uint32_t id, uint8_t length, const uint8_t* data) {
     // Send CAN message
     can_intf.prepareMessage(id, length, !data);
     if (data) {
@@ -26,11 +26,11 @@ static bool sendMsg(TWAIClass& can_intf, uint32_t id, uint8_t length, const uint
     return can_intf.endPacket();
 }
 
-static void onReceive(const CanMsg& msg, ODriveCAN& odrive) {
+static inline void onReceive(const CanMsg& msg, ODriveCAN& odrive) {
     odrive.onReceive(msg.id, msg.len, msg.buffer);
 }
 
-static void pumpEvents(TWAIClass& intf) {
+static inline void pumpEvents(TWAIClass& intf) {
     CanMsg msg;
     int length = intf.parsePacket(); // Check if a packet is available
 
