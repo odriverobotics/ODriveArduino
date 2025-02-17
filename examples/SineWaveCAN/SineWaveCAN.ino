@@ -17,7 +17,7 @@
   // #define IS_TEENSY_BUILTIN // Teensy boards with built-in CAN interface (e.g. Teensy 4.1). See below to select which interface to use.
   // #define IS_ARDUINO_BUILTIN // Arduino boards with built-in CAN interface (e.g. Arduino Uno R4 Minima)
   // #define IS_MCP2515 // Any board with external MCP2515 based extension module. See below to configure the module.
-  #define IS_ESP32_TWAI // Any board with external MCP2515 based extension module. See below to configure the module.
+  // #define IS_ESP32_TWAI // ESP32 boards using a external transceiver such as sn65hvd230. Uses Espressif's native TWAI driver. Connect and TX_PIN from ESP32 to D on transceiver and RX_PIN from ESP32 to R on transceiver. 
 
 
 /* Board-specific includes ---------------------------------------------------*/
