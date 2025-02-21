@@ -281,6 +281,7 @@ public:
         data[1] = (uint8_t)(endpoint_id);
         data[2] = (uint8_t)(endpoint_id >> 8);
 
+        requested_msg_id_ = 0x005; // Await TxSdo message
         can_intf_.sendMsg((node_id_ << ODriveCAN::kNodeIdShift) | 0x004, 8, data);
         if (!awaitMsg(timeout_ms)) return T{};
 

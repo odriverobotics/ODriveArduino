@@ -1,3 +1,5 @@
+# [0.10.6]
+- Fixed getEndpoint not updating requested_msg_id_, causing periodic messages to be read as a TxSdo message.
 
 # [0.10.5]
 - Fixed SineWaveCAN example vbus request timeout
