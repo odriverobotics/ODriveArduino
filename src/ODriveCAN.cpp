@@ -178,6 +178,13 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
                 temperature_callback_(temperature, temperature_user_data_);
             break;
         }
+        case Get_Bus_Voltage_Current_msg_t::cmd_id: {
+            Get_Bus_Voltage_Current_msg_t bus_vi;
+            bus_vi.decode_buf(data);
+            if (busVI_callback_)
+                busVI_callback_(bus_vi, busVI_user_data_);
+            break;
+        }
         default: {
             if (requested_msg_id_ == REQUEST_PENDING)
                 return;
