@@ -161,7 +161,7 @@ public:
     bool getVersion(Get_Version_msg_t& msg, uint16_t timeout_ms = 10);
 
     /**
-     * @brief Requests encoder feedback data.  May trigger onFeedback callback if it's registered
+     * @brief Requests encoder feedback data.
      * 
      * This function will block and wait for up to timeout_ms (default 10msec) for ODrive to reply
      */
