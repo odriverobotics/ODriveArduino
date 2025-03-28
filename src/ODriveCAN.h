@@ -248,6 +248,14 @@ public:
     }
 
     /**
+     * @brief Registers a callback for ODrive error messages.
+     */
+    void onError(void (*callback)(Get_Error_msg_t& msg, void* user_data), void* user_data = nullptr) {
+        error_callback_ = callback;
+        error_user_data_ = user_data;
+    }
+
+    /**
      * @brief Processes received CAN messages for the ODrive.
      */
     void onReceive(uint32_t id, uint8_t length, const uint8_t* data);
@@ -360,6 +368,7 @@ private:
     void* temperature_user_data_;
     void* busVI_user_data_;
     void* currents_user_data_;
+    void* error_user_data_;
     
     void (*axis_state_callback_)(Heartbeat_msg_t& feedback, void* user_data) = nullptr;
     void (*feedback_callback_)(Get_Encoder_Estimates_msg_t& feedback, void* user_data) = nullptr;
@@ -367,4 +376,5 @@ private:
     void (*temperature_callback_)(Get_Temperature_msg_t& feedback, void* user_data) = nullptr;
     void (*busVI_callback_)(Get_Bus_Voltage_Current_msg_t& feedback, void* user_data) = nullptr;
     void (*currents_callback_)(Get_Iq_msg_t& feedback, void* user_data) = nullptr;
+    void (*error_callback_)(Get_Error_msg_t& msg, void* user_data) = nullptr;
 };

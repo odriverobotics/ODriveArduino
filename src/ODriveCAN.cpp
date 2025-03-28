@@ -192,6 +192,13 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
                 currents_callback_(iq, currents_user_data_);
             break;
         }
+        case Get_Error_msg_t::cmd_id: {
+            Get_Error_msg_t error;
+            error.decode_buf(data);
+            if (error_callback_)
+                error_callback_(error, error_user_data_);
+            break;
+        }
         default: {
             if (requested_msg_id_ == REQUEST_PENDING)
                 return;
