@@ -223,6 +223,14 @@ public:
     }
 
     /**
+     * @brief Registers a callback for ODrive temperature feedback.
+     */
+    void onTemperature(void (*callback)(Get_Temperature_msg_t& feedback, void* user_data), void* user_data = nullptr) {
+        temperature_callback_ = callback;
+        temperature_user_data_ = user_data;
+    }
+
+    /**
      * @brief Processes received CAN messages for the ODrive.
      */
     void onReceive(uint32_t id, uint8_t length, const uint8_t* data);
@@ -332,8 +340,10 @@ private:
     void* axis_state_user_data_;
     void* feedback_user_data_;
     void* torques_user_data_;
+    void* temperature_user_data_;
     
     void (*axis_state_callback_)(Heartbeat_msg_t& feedback, void* user_data) = nullptr;
     void (*feedback_callback_)(Get_Encoder_Estimates_msg_t& feedback, void* user_data) = nullptr;
     void (*torques_callback_)(Get_Torques_msg_t& feedback, void* user_data) = nullptr;
+    void (*temperature_callback_)(Get_Temperature_msg_t& feedback, void* user_data) = nullptr;
 };
