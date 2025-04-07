@@ -27,14 +27,14 @@ unsigned long baudrate = 19200; // Must match what you configure on the ODrive (
 // pin 1: TX - connect to ODrive RX
 // See https://www.pjrc.com/teensy/td_uart.html for other options on Teensy
 // HardwareSerial& odrive_serial = Serial1;
-// int baudrate = 115200; // Must match what you configure on the ODrive (see docs for details)
+// unsigned long baudrate = 115200; // Must match what you configure on the ODrive (see docs for details)
 
 // Arduino Mega or Due - Serial1
 // pin 19: RX - connect to ODrive TX
 // pin 18: TX - connect to ODrive RX
 // See https://www.arduino.cc/reference/en/language/functions/communication/serial/ for other options
 // HardwareSerial& odrive_serial = Serial1;
-// int baudrate = 115200; // Must match what you configure on the ODrive (see docs for details)
+// unsigned long baudrate = 115200; // Must match what you configure on the ODrive (see docs for details)
 
 
 ODriveUART odrive(odrive_serial);

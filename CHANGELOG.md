@@ -1,3 +1,6 @@
+# [0.10.7]
+- Fixed int overflow issue w/ Arduino Mega example
+
 # [0.10.6]
 - Fixed getEndpoint not updating requested_msg_id_, causing periodic messages to be read as a TxSdo message.
 

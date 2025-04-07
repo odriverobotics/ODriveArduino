@@ -166,6 +166,12 @@ enum ODriveSpiEncoderMode {
     SPI_ENCODER_MODE_NOVOHALL                = 8,
 };
 
+// ODrive.IncrementalEncoderFilter
+enum ODriveIncrementalEncoderFilter {
+    INCREMENTAL_ENCODER_FILTER_SPEED_10M     = 0,
+    INCREMENTAL_ENCODER_FILTER_SPEED_20M     = 1,
+};
+
 // ODrive.Rs485EncoderMode
 enum ODriveRs485EncoderMode {
     RS485_ENCODER_MODE_DISABLED              = 0,
@@ -190,8 +196,8 @@ enum ODriveInputMode {
 
 // ODrive.MotorType
 enum ODriveMotorType {
-    MOTOR_TYPE_HIGH_CURRENT                  = 0,
-    MOTOR_TYPE_GIMBAL                        = 2,
+    MOTOR_TYPE_PMSM_CURRENT_CONTROL          = 0,
+    MOTOR_TYPE_PMSM_VOLTAGE_CONTROL          = 2,
     MOTOR_TYPE_ACIM                          = 3,
 };
 
