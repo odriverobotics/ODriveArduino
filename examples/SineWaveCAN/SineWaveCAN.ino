@@ -20,11 +20,12 @@
 // #define IS_TEENSY_BUILTIN // Teensy boards with built-in CAN interface (e.g. Teensy 4.1). See below to select which interface to use.
 // #define IS_ARDUINO_BUILTIN // Arduino boards with built-in CAN interface (e.g. Arduino Uno R4 Minima)
 // #define IS_MCP2515 // Any board with external MCP2515 based extension module. See below to configure the module.
+// #define IS_STM32_BUILTIN // STM32 boards with built-in CAN interface (e.g. STM32F4 Discovery).
 
 
 /* Board-specific includes ---------------------------------------------------*/
 
-#if defined(IS_TEENSY_BUILTIN) + defined(IS_ARDUINO_BUILTIN) + defined(IS_MCP2515) != 1
+#if defined(IS_TEENSY_BUILTIN) + defined(IS_ARDUINO_BUILTIN) + defined(IS_MCP2515) + defined(IS_STM32_BUILTIN) != 1
 #warning "Select exactly one hardware option at the top of this file."
 
 #if CAN_HOWMANY > 0 || CANFD_HOWMANY > 0
@@ -58,6 +59,11 @@
 struct ODriveStatus; // hack to prevent teensy compile error
 #endif // IS_TEENSY_BUILTIN
 
+#ifdef IS_STM32_BUILTIN
+// See https://github.com/pazi88/STM32_CAN
+#include <STM32_CAN.h>
+#include "ODriveSTM32CAN.hpp"
+#endif // IS_STM32_BUILTIN
 
 
 
@@ -136,6 +142,22 @@ bool setupCan() {
 }
 
 #endif
+
+
+/* STM32 boards with built-in CAN */
+
+#ifdef IS_STM32_BUILTIN
+
+STM32_CAN Can1( CAN1 );
+STM32_CAN& can_intf = Can1;
+
+bool setupCan() {
+  can_intf.begin();
+  can_intf.setBaudRate(CAN_BAUDRATE);
+  return true;
+}
+
+#endif // IS_STM32_BUILTIN
 
 
 /* Example sketch ------------------------------------------------------------*/
