@@ -1,0 +1,34 @@
+# Reference: https://docs.platformio.org/en/stable/integration/ci/github-actions.html
+
+name: PlatformIO CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Run PlatformIO
+        run: |
+          pio ci --lib="." --project-conf platformio.ini examples/SineWaveCAN/SineWaveCAN.ino
+          #pio ci --lib="." examples/SineWaveCAN/SineWaveCAN.ino
