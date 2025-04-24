@@ -145,8 +145,17 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
         Serial.print(msg.data[byte_index--], HEX);
     Serial.println(F(""));
 #endif // DEBUG
+    // Check that the message is meant for this node.
     if (node_id_ != (id >> ODriveCAN::kNodeIdShift))
         return;
+    // If the message is requested, copy it in the request buffer and exit.
+    if ((id & ODriveCAN::kCmdIdBits) == requested_msg_id_) {
+        memcpy(buffer_, data, length);
+        requested_msg_id_ = REQUEST_PENDING;
+        return;
+    };
+    // Check if any of the registered callback handlers apply. Useful for cyclic
+    // messages.
     switch (id & ODriveCAN::kCmdIdBits) {
         case Get_Encoder_Estimates_msg_t::cmd_id: {
             Get_Encoder_Estimates_msg_t estimates;
@@ -178,10 +187,6 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
             Serial.print(F("waiting for: 0x"));
             Serial.println(requested_msg_id_, HEX);
 #endif // DEBUG
-            if ((id & ODriveCAN::kCmdIdBits) != requested_msg_id_)
-                return;
-            memcpy(buffer_, data, length);
-            requested_msg_id_ = REQUEST_PENDING;
         }
     }
 }
