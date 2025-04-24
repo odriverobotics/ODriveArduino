@@ -4,3 +4,6 @@
 
 # PlatformIO
 /.pio
+
+# OS files
+.DS_Store
