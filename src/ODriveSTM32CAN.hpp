@@ -1,3 +1,6 @@
+// CAN glue layer for STM32 platforms.
+// See ODriveHardwareCAN.hpp for documentation.
+
 #pragma once
 
 #include "ODriveCAN.h"

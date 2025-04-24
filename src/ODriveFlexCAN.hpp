@@ -1,3 +1,6 @@
+// Glue layer for FlexCAN-based CAN stacks.
+// See ODriveHardwareCAN.hpp for documentation.
+
 #pragma once
 
 #include "ODriveCAN.h"

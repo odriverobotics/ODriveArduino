@@ -1,3 +1,6 @@
+// Glue layer for MCP2515-based CAN interfaces.
+// See ODriveHardwareCAN.hpp for documentation.
+
 #pragma once
 
 #include "MCP2515.h"
@@ -14,6 +17,8 @@ struct CanMsg {
 // Must be defined by the application if you want to use defaultCanReceiveCallback().
 void onCanMessage(const CanMsg& msg);
 
+// MSB of id means "extended"
+// if data is null, it's a remote request frame
 static bool sendMsg(MCP2515Class& can_intf, uint32_t id, uint8_t length, const uint8_t* data) {
     if (id & 0x80000000) {
         can_intf.beginExtendedPacket(id & 0x1fffffff, length, !data);
