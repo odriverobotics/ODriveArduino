@@ -362,6 +362,8 @@ private:
     static const uint8_t kNodeIdShift = 5;
     static const uint8_t kCmdIdBits = 0x1F;
 
+    // TODO: More scalable / simplified callback handling.
+    // See https://github.com/odriverobotics/ODriveArduino/pull/15#issuecomment-2826941741
     void* axis_state_user_data_;
     void* feedback_user_data_;
     void* torques_user_data_;
