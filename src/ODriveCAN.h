@@ -171,6 +171,7 @@ public:
      * @brief Requests ODrive DC bus voltage and current
      * 
      * This function will block and wait for up to timeout_ms (default 10msec) for ODrive to reply
+     * May trigger onBusVI callback if it's registered.
      */
     bool getBusVI(Get_Bus_Voltage_Current_msg_t& msg, uint16_t timeout_ms = 10);
 
@@ -220,6 +221,38 @@ public:
     void onTorques(void (*callback)(Get_Torques_msg_t& feedback, void* user_data), void* user_data = nullptr) {
         torques_callback_ = callback; 
         torques_user_data_ = user_data;
+    }
+
+    /**
+     * @brief Registers a callback for ODrive temperature feedback.
+     */
+    void onTemperature(void (*callback)(Get_Temperature_msg_t& feedback, void* user_data), void* user_data = nullptr) {
+        temperature_callback_ = callback;
+        temperature_user_data_ = user_data;
+    }
+
+    /**
+     * @brief Registers a callback for ODrive bus voltage/current feedback.
+     */
+    void onBusVI(void (*callback)(Get_Bus_Voltage_Current_msg_t& feedback, void* user_data), void* user_data = nullptr) {
+        busVI_callback_ = callback;
+        busVI_user_data_ = user_data;
+    }
+
+    /**
+     * @brief Registers a callback for ODrive currents feedback.
+     */
+    void onCurrents(void (*callback)(Get_Iq_msg_t& feedback, void* user_data), void* user_data = nullptr) {
+        currents_callback_ = callback;
+        currents_user_data_ = user_data;
+    }
+
+    /**
+     * @brief Registers a callback for ODrive error messages.
+     */
+    void onError(void (*callback)(Get_Error_msg_t& msg, void* user_data), void* user_data = nullptr) {
+        error_callback_ = callback;
+        error_user_data_ = user_data;
     }
 
     /**
@@ -332,8 +365,16 @@ private:
     void* axis_state_user_data_;
     void* feedback_user_data_;
     void* torques_user_data_;
+    void* temperature_user_data_;
+    void* busVI_user_data_;
+    void* currents_user_data_;
+    void* error_user_data_;
     
     void (*axis_state_callback_)(Heartbeat_msg_t& feedback, void* user_data) = nullptr;
     void (*feedback_callback_)(Get_Encoder_Estimates_msg_t& feedback, void* user_data) = nullptr;
     void (*torques_callback_)(Get_Torques_msg_t& feedback, void* user_data) = nullptr;
+    void (*temperature_callback_)(Get_Temperature_msg_t& feedback, void* user_data) = nullptr;
+    void (*busVI_callback_)(Get_Bus_Voltage_Current_msg_t& feedback, void* user_data) = nullptr;
+    void (*currents_callback_)(Get_Iq_msg_t& feedback, void* user_data) = nullptr;
+    void (*error_callback_)(Get_Error_msg_t& msg, void* user_data) = nullptr;
 };

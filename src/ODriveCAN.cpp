@@ -180,6 +180,34 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
                 Serial.println(F("missing callback"));
             break;
         }
+        case Get_Temperature_msg_t::cmd_id: {
+            Get_Temperature_msg_t temperature;
+            temperature.decode_buf(data);
+            if (temperature_callback_)
+                temperature_callback_(temperature, temperature_user_data_);
+            break;
+        }
+        case Get_Bus_Voltage_Current_msg_t::cmd_id: {
+            Get_Bus_Voltage_Current_msg_t bus_vi;
+            bus_vi.decode_buf(data);
+            if (busVI_callback_)
+                busVI_callback_(bus_vi, busVI_user_data_);
+            break;
+        }
+        case Get_Iq_msg_t::cmd_id: {
+            Get_Iq_msg_t iq;
+            iq.decode_buf(data);
+            if (currents_callback_)
+                currents_callback_(iq, currents_user_data_);
+            break;
+        }
+        case Get_Error_msg_t::cmd_id: {
+            Get_Error_msg_t error;
+            error.decode_buf(data);
+            if (error_callback_)
+                error_callback_(error, error_user_data_);
+            break;
+        }
         default: {
             if (requested_msg_id_ == REQUEST_PENDING)
                 return;
