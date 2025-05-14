@@ -134,6 +134,14 @@ bool ODriveCAN::getPower(Get_Powers_msg_t& msg, uint16_t timeout_ms) {
     return request(msg, timeout_ms);
 }
 
+bool ODriveCAN::reset(ResetAction action)
+{
+    Reboot_msg_t msg;
+    msg.Action = action;
+
+    return send(msg);
+}
+
 void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
 #ifdef DEBUG
     int byte_index = length - 1;
