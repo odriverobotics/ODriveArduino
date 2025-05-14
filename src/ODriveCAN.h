@@ -182,10 +182,10 @@ public:
      */
     bool getPower(Get_Powers_msg_t& msg, uint16_t timeout_ms = 10);
     
-    enum ResetAction {
-        Reboot,
-        SaveConfiguration,
-        EraseConfiguration
+    enum ResetAction : uint8_t {
+        Reboot = 0,
+        SaveConfiguration = 1,
+        EraseConfiguration = 2,
     };
     
     /**
