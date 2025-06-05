@@ -2,17 +2,19 @@
 // License: MIT
 // Documentation: https://docs.odriverobotics.com/v/latest/guides/arduino-uart-guide.html
 
-#include "Arduino.h"
 #include "ODriveUART.h"
+
+#include "Arduino.h"
 
 static const int kMotorNumber = 0;
 
 // Print with stream operator
+// clang-format off
 template<class T> inline Print& operator <<(Print &obj,     T arg) { obj.print(arg);    return obj; }
 template<>        inline Print& operator <<(Print &obj, float arg) { obj.print(arg, 4); return obj; }
+// clang-format on
 
-ODriveUART::ODriveUART(Stream& serial)
-    : serial_(serial) {}
+ODriveUART::ODriveUART(Stream& serial) : serial_(serial) {}
 
 void ODriveUART::clearErrors() {
     serial_ << F("sc\n");
@@ -27,7 +29,8 @@ void ODriveUART::setPosition(float position, float velocity_feedforward) {
 }
 
 void ODriveUART::setPosition(float position, float velocity_feedforward, float torque_feedforward) {
-    serial_ << F("p ") << kMotorNumber  << F(" ") << position << F(" ") << velocity_feedforward << F(" ") << torque_feedforward << F("\n");
+    serial_ << F("p ") << kMotorNumber << F(" ") << position << F(" ") << velocity_feedforward << F(" ")
+            << torque_feedforward << F("\n");
 }
 
 void ODriveUART::setVelocity(float velocity) {
@@ -35,7 +38,7 @@ void ODriveUART::setVelocity(float velocity) {
 }
 
 void ODriveUART::setVelocity(float velocity, float torque_feedforward) {
-    serial_ << F("v ") << kMotorNumber  << F(" ") << velocity << F(" ") << torque_feedforward << F("\n");
+    serial_ << F("v ") << kMotorNumber << F(" ") << velocity << F(" ") << torque_feedforward << F("\n");
 }
 
 void ODriveUART::setTorque(float torque) {
@@ -60,7 +63,7 @@ ODriveFeedback ODriveUART::getFeedback() {
     if (spacePos >= 0) {
         return {
             response.substring(0, spacePos).toFloat(),
-            response.substring(spacePos+1).toFloat()
+            response.substring(spacePos + 1).toFloat(),
         };
     } else {
         return {0.0f, 0.0f};

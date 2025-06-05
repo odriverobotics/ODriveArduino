@@ -62,21 +62,21 @@ public:
 
     /**
      * @brief Requests the latest position and velocity estimates.
-     * 
+     *
      * Returns pos = 0.0 and vel = 0.0 in case of a communication error.
      */
     ODriveFeedback getFeedback();
 
     /**
      * @brief Requests the latest position estimate.
-     * 
+     *
      * Returns 0.0 in case of a communication error.
      */
     float getPosition() { return getFeedback().pos; }
 
     /**
      * @brief Requests the latest velocity estimate.
-     * 
+     *
      * Returns 0.0 in case of a communication error.
      */
     float getVelocity() { return getFeedback().vel; }
@@ -95,7 +95,7 @@ public:
 
     /**
      * @brief Requests the current axis state from the ODrive.
-     * 
+     *
      * Returns AXIS_STATE_UNDEFINED in case of a communication error.
      */
     ODriveAxisState getState();
@@ -106,4 +106,4 @@ private:
     Stream& serial_;
 };
 
-#endif //ODriveUART_h
+#endif // ODriveUART_h

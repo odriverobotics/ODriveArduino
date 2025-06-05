@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "ODriveCAN.h"
 #include "FlexCAN_T4.h"
+#include "ODriveCAN.h"
 
 using CanMsg = CAN_message_t;
 
@@ -14,7 +14,7 @@ static bool sendMsg(FlexCAN_T4_Base& can_intf, uint32_t id, uint8_t length, cons
         .flags = {.extended = (bool)(id & 0x80000000), .remote = !data},
         .len = length,
     };
-    
+
     if (data) {
         memcpy(teensy_msg.buf, data, length);
     }
