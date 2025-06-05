@@ -4,6 +4,7 @@
 #pragma once
 
 #include "ODriveCAN.h"
+
 #include <STM32_CAN.h>
 
 using CanMsg = CAN_message_t;
@@ -12,17 +13,17 @@ using CanMsg = CAN_message_t;
 void onCanMessage(const CanMsg& msg);
 
 static bool sendMsg(STM32_CAN& can_intf, uint32_t id, uint8_t length, const uint8_t* data) {
-  CanMsg msg;
-  msg.id = id & 0x1ffffff;
-  msg.flags.extended = id & 0x80000000;
-  msg.flags.remote = (data == nullptr);
-  msg.len = length;
-  if (data) {
-    for (int i = 0; i < length; ++i) {
-      msg.buf[i] = data[i];
+    CanMsg msg;
+    msg.id = id & 0x1ffffff;
+    msg.flags.extended = id & 0x80000000;
+    msg.flags.remote = (data == nullptr);
+    msg.len = length;
+    if (data) {
+        for (int i = 0; i < length; ++i) {
+            msg.buf[i] = data[i];
+        }
     }
-  }
-  return can_intf.write(msg) >= 0;
+    return can_intf.write(msg) >= 0;
 }
 
 static void onReceive(const CanMsg& msg, ODriveCAN& odrive) {

@@ -134,8 +134,7 @@ bool ODriveCAN::getPower(Get_Powers_msg_t& msg, uint16_t timeout_ms) {
     return request(msg, timeout_ms);
 }
 
-bool ODriveCAN::reset(ResetAction action)
-{
+bool ODriveCAN::reset(ResetAction action) {
     Reboot_msg_t msg;
     msg.Action = action;
 
