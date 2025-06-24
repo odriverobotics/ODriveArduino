@@ -224,7 +224,6 @@ void setup() {
   Serial.println("Waiting for ODrive...");
   while (!odrv0_user_data.received_heartbeat) {
     pumpEvents(can_intf);
-    delay(100);
   }
 
   Serial.println("found ODrive");

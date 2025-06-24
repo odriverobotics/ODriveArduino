@@ -1,3 +1,6 @@
+# [0.10.8]
+- Removed delay while waiting for heartbeat message, causing infinite/nondeterministic delays on some Teensy-based systems with multiple ODrives.
+
 # [0.10.7]
 - Fixed int overflow issue w/ Arduino Mega example
 
