@@ -156,7 +156,7 @@ enum ODriveEncoderId {
 // ODrive.SpiEncoderMode
 enum ODriveSpiEncoderMode {
     SPI_ENCODER_MODE_DISABLED                = 0,
-    SPI_ENCODER_MODE_RLS                     = 1,
+    SPI_ENCODER_MODE_RLS_ORBIS               = 1,
     SPI_ENCODER_MODE_AMS                     = 2,
     SPI_ENCODER_MODE_CUI                     = 3,
     SPI_ENCODER_MODE_AEAT                    = 4,
