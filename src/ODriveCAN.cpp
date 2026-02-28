@@ -149,7 +149,7 @@ void ODriveCAN::onReceive(uint32_t id, uint8_t length, const uint8_t* data) {
     Serial.println(id, HEX);
     Serial.print(F("  data: 0x"));
     while (byte_index >= 0)
-        Serial.print(msg.data[byte_index--], HEX);
+        Serial.print(data[byte_index--], HEX);
     Serial.println(F(""));
 #endif // DEBUG
     // Check that the message is meant for this node.
