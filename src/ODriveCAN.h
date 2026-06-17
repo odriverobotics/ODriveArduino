@@ -323,6 +323,12 @@ public:
             return T{};
         }
 
+        // Ignore a TxSdo that echoes a different endpoint than we requested.
+        uint16_t resp_endpoint = (uint16_t)buffer_[1] | ((uint16_t)buffer_[2] << 8);
+        if (resp_endpoint != endpoint_id) {
+            return T{};
+        }
+
         T ret{};
         memcpy(&ret, &buffer_[4], sizeof(T));
         return ret;
@@ -334,24 +340,43 @@ public:
      * @tparam T Type of the value from flat_endpoints.json
      * @param endpoint_id Unique ID of endpoint from flat_endpoints.json
      * @param value value to write to the endpoint
+     * @param timeout_ms Time to wait for the ODrive's TxSdo acknowledgment.
+     *                   Pass 0 to send without waiting (fire-and-forget).
      *
-     * This function returns immediately and does not check if the ODrive
-     * received the CAN message.
+     * @return true if the ODrive acknowledged the write (or timeout_ms == 0),
+     *         false if no matching TxSdo was received before the timeout.
+     *
+     * The ODrive replies with a TxSdo message in response to any RxSdo,
+     * including writes, so this blocks until that acknowledgment is received
+     * or the timeout is reached.
      */
     template<typename T>
-    bool setEndpoint(uint16_t endpoint_id, T value) {
+    bool setEndpoint(uint16_t endpoint_id, T value, uint16_t timeout_ms = 10) {
         uint8_t data[8] = {};
         data[0] = 1; // Opcode write
 
-        // Endpoint
-        data[1] = endpoint_id & 0xFF;
-        data[2] = (endpoint_id >> 8) & 0xFF;
+        // Little-endian endpoint
+        data[1] = (uint8_t)(endpoint_id);
+        data[2] = (uint8_t)(endpoint_id >> 8);
 
         // Value to write
         memcpy(&data[4], &value, sizeof(T));
 
+        requested_msg_id_ = 0x005; // Await TxSdo acknowledgment
         can_intf_.sendMsg((node_id_ << ODriveCAN::kNodeIdShift) | 0x004, 8, data);
-        return true;
+
+        if (timeout_ms == 0) {
+            requested_msg_id_ = REQUEST_PENDING; // fire-and-forget, don't wait
+            return true;
+        }
+
+        if (!awaitMsg(timeout_ms)) {
+            return false;
+        }
+
+        // Confirm the acknowledgment echoes the endpoint we wrote to.
+        uint16_t acked_endpoint = (uint16_t)buffer_[1] | ((uint16_t)buffer_[2] << 8);
+        return acked_endpoint == endpoint_id;
     }
 
 private:
