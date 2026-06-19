@@ -9,6 +9,9 @@
 // Must be defined by the application
 void onCanMessage(const CanMsg& msg);
 
+// Forward declaration; defined below and used by sendMsg().
+static void pumpEvents(HardwareCAN& intf, int max_events = 100);
+
 /**
  * @brief Sends a CAN message over the specified platform-specific interface.
  *
@@ -26,12 +29,19 @@ static bool sendMsg(HardwareCAN& can_intf, uint32_t id, uint8_t length, const ui
     // Note: Arduino_CAN does not support the RTR bit. The ODrive interprets
     // zero-length packets the same as RTR=1, but it creates the possibility of
     // collisions.
+
+    // Flush pending RX messages before writing. On polling-based platforms (e.g.
+    // Arduino Uno R4) the single TX mailbox may report busy if the CAN
+    // controller hasn't had a chance to process events. This mirrors the
+    // can_intf.events() call in the FlexCAN (Teensy) adapter.
+    pumpEvents(can_intf);
+
     CanMsg msg{
         (id & 0x80000000) ? CanExtendedId(id) : CanStandardId(id),
         length,
         data,
     };
-    return can_intf.write(msg) >= 0;
+    return can_intf.write(msg) > 0;
 }
 
 /**
@@ -56,7 +66,7 @@ static void onReceive(const CanMsg& msg, ODriveCAN& odrive) {
  * @param max_events: The maximum number of events to process. This prevents
  *        an infinite loop if messages come at a high rate.
  */
-static void pumpEvents(HardwareCAN& intf, int max_events = 100) {
+static void pumpEvents(HardwareCAN& intf, int max_events) {
     // max_events prevents an infinite loop if messages come at a high rate
     while (intf.available() && max_events--) {
         onCanMessage(intf.read());
