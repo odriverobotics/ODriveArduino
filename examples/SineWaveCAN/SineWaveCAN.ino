@@ -22,11 +22,11 @@
 // #define IS_MCP2515 // Any board with external MCP2515 based extension module. See below to configure the module.
 // #define IS_STM32_BUILTIN // STM32 boards with built-in CAN interface (e.g. STM32F4 Discovery).
 // #define IS_ESP32_TWAI // ESP32 boards with built-in TWAI (CAN) interface. Directly uses the ESP-IDF TWAI driver.
-
+// #define IS_TCAN4X5X // RP2350 / Arduino boards with external TCAN4551 SPI controller.
 
 /* Board-specific includes ---------------------------------------------------*/
 
-#if defined(IS_TEENSY_BUILTIN) + defined(IS_ARDUINO_BUILTIN) + defined(IS_MCP2515) + defined(IS_STM32_BUILTIN) + defined(IS_ESP32_TWAI) != 1
+#if defined(IS_TEENSY_BUILTIN) + defined(IS_ARDUINO_BUILTIN) + defined(IS_MCP2515) + defined(IS_STM32_BUILTIN) + defined(IS_ESP32_TWAI) + defined(IS_TCAN4X5X) != 1
 #warning "Select exactly one hardware option at the top of this file."
 
 #if CAN_HOWMANY > 0 || CANFD_HOWMANY > 0
@@ -72,7 +72,11 @@ struct ODriveStatus; // hack to prevent teensy compile error
 #include "ODriveESP32TWAI.hpp"
 #endif // IS_ESP32_TWAI
 
-
+#ifdef IS_TCAN4X5X
+#include <SPI.h>
+#include <TCAN4x5x.h>
+#include "ODriveTCAN4x5x.hpp"
+#endif // IS_TCAN4X5X
 
 /* Board-specific settings ---------------------------------------------------*/
 
@@ -213,6 +217,76 @@ bool setupCan() {
 
 #endif // IS_ESP32_TWAI
 
+/* TCAN4551 SPI Controller */
+
+#ifdef IS_TCAN4X5X
+
+const uint8_t MISO_PIN = 16;
+const uint8_t CS_PIN   = 17;
+const uint8_t SCK_PIN  = 18;
+const uint8_t MOSI_PIN = 19;
+const uint8_t INT1_PIN = 20;
+const uint8_t INT2_PIN = 21;
+const uint8_t RST_PIN  = 0xFF;
+
+TCAN4x5x can_intf(CS_PIN, MISO_PIN, MOSI_PIN, SCK_PIN, RST_PIN);
+
+volatile bool tcanIrqAsserted = false;
+void IRAM_ATTR onTcanPinFall() {
+tcanIrqAsserted = true;
+}
+
+bool setupCan() {
+uint16_t prescaler = (uint16_t)(1000000UL / CAN_BAUDRATE);
+if (prescaler < 1) prescaler = 1;
+can_intf.setNominalBitRate(prescaler, 32, 8);
+
+TCAN4x5x_MRAM_Config customMRAM = {0};
+customMRAM.SIDNumElements      = 1;
+customMRAM.XIDNumElements      = 1;
+customMRAM.Rx0NumElements      = 16;
+customMRAM.Rx0ElementSize      = MRAM_8_Byte_Data;
+customMRAM.TxBufferNumElements = 4;
+customMRAM.TxBufferElementSize = MRAM_8_Byte_Data;
+can_intf.setMRAMConfig(&customMRAM);
+
+TCAN4x5x_MCAN_Global_Filter_Configuration gfc = {0};
+gfc.RRFE = 1;
+gfc.RRFS = 1;
+gfc.ANFE = TCAN4x5x_GFC_ACCEPT_INTO_RXFIFO0;
+gfc.ANFS = TCAN4x5x_GFC_ACCEPT_INTO_RXFIFO0;
+can_intf.setGlobalFilterConfig(&gfc);
+
+TCAN4x5x_DEV_CONFIG devCfg = {0};
+devCfg.SWE_DIS          = 1;
+devCfg.CLK_REF          = 1;
+devCfg.GPIO1_CONFIG     = TCAN4x5x_DEV_CONFIG_GPIO1_CONFIG_GPO;
+devCfg.GPIO1_GPO_CONFIG = TCAN4x5x_DEV_CONFIG_GPO1_MCAN_INT1;
+devCfg.GPO2_CONFIG      = TCAN4x5x_DEV_CONFIG_GPO2_MCAN_INT0;
+devCfg.WD_ACTION        = TCAN4x5x_DEV_CONFIG_WDT_ACTION_nINT;
+devCfg.WAKE_CONFIG      = TCAN4x5x_DEV_CONFIG_WAKE_BOTH_EDGES;
+can_intf.setDeviceConfig(&devCfg);
+
+can_intf.attachInterruptPin(INT1_PIN, onTcanPinFall);
+can_intf.attachInterruptPin(INT2_PIN, onTcanPinFall);
+
+can_intf.begin(&SPI);
+
+TCAN4x5x_MCAN_CCCR_Config cccr = {0};
+can_intf.MCAN_EnableProtectedRegisters();
+can_intf.MCAN_ReadCCCRRegister(&cccr);
+cccr.FDOE = 0;
+cccr.BRSE = 0;
+can_intf.MCAN_ConfigureCCCRRegister(&cccr);
+can_intf.MCAN_DisableProtectedRegisters();
+
+can_intf.WDT_Disable();
+can_intf.Device_SetMode(TCAN4x5x_DEVICE_MODE_NORMAL);
+
+return (can_intf.Device_ReadDeviceVersion() != 0xFFFF && can_intf.Device_ReadMode() == TCAN4x5x_DEVICE_MODE_NORMAL);
+}
+
+#endif // IS_TCAN4X5X
 
 /* Example sketch ------------------------------------------------------------*/
 
